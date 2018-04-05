@@ -2,6 +2,12 @@ language: node_js
 node_js:
     - "8"
 
+cache:
+    yarn: true
+    directories: 
+        - node_modules
+        - build
+
 before_deploy:
     - "yarn build"
     - "ls -a"
