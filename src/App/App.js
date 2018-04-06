@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import logo from './bike_white_48px.svg';
+import logo from '../bike_white_48px.svg';
 import './App.css';
 
 class App extends Component {
@@ -11,7 +11,7 @@ class App extends Component {
           <h1 className="App-title">Bike Sharing</h1>
         </header>
         <p className="App-intro">
-          Edit <code>src/App.js</code> and save to reload.
+          Edit <code>src/App/App.js</code> and save to reload.
         </p>
       </div>
     );
