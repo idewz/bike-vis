@@ -1,8 +1,28 @@
 import React, { Component } from 'react';
-import logo from '../bike_white_48px.svg';
+import Chart from '../Chart';
+import { csv } from 'd3-fetch';
+import Trip from '../Trip';
+
 import './App.css';
+import logo from '../bike_white_48px.svg';
 
 class App extends Component {
+  constructor() {
+    super();
+
+    this.state = {
+      data: [],
+    };
+  }
+
+  async componentWillMount() {
+    const trips = await csv(
+      '../data/ford_gobike/201803_fordgobike_tripdata.csv',
+    );
+
+    this.setState({ data: trips.map(Trip) });
+  }
+
   render() {
     return (
       <div className="App">
@@ -10,9 +30,8 @@ class App extends Component {
           <img src={logo} className="App-logo" alt="logo" />
           <h1 className="App-title">Bike Sharing</h1>
         </header>
-        <p className="App-intro">
-          Edit <code>src/App/App.js</code> and save to reload.
-        </p>
+        <p className="App-intro" />
+        <Chart data={this.state.data} />
       </div>
     );
   }
