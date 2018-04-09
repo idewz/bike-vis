@@ -17,7 +17,7 @@ class App extends Component {
 
   async componentWillMount() {
     const trips = await csv(
-      '../data/ford_gobike/201803_fordgobike_tripdata.csv',
+      '../data/ford_gobike/mini.csv',
     );
 
     this.setState({ data: trips.map(Trip) });
