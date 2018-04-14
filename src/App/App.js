@@ -30,13 +30,12 @@ class App extends Component {
             <header className="App-header">
               <img src={logo} className="App-logo" alt="logo" />
               <h1 className="App-title">Bike Sharing</h1>
+              <nav>
+                <Link to="/">Home</Link>
+                <Link to="/debug">Debug</Link>
+              </nav>
             </header>
-            <p className="App-intro" />
           </div>
-          <nav>
-            <Link to="/">Home</Link>
-            <Link to="/debug">Debug</Link>
-          </nav>
           <Switch>
             <Route exact path="/" component={null} />
             <Route
