@@ -1,9 +1,10 @@
 import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
 
-class Chart extends Component {
-  constructor() {
-    super();
+class Dashboard extends Component {
+  constructor(props) {
+    super(props);
+
     this.state = { value: 0 };
 
     this.handleChange = this.handleChange.bind(this);
@@ -14,7 +15,7 @@ class Chart extends Component {
   };
 
   renderRows() {
-    const t = this.props.data[this.state.value];
+    const t = this.props.trips[this.state.value];
 
     if (t === undefined) {
       return null;
@@ -23,7 +24,7 @@ class Chart extends Component {
     const Row = ({ objKey, objVal }) => (
       <tr>
         <td>{objKey}</td>
-        <td>{objVal instanceof Date ? objVal.toString() : objVal}</td>
+        <td>{objVal instanceof Object ? objVal.toString() : objVal}</td>
       </tr>
     );
 
@@ -33,13 +34,14 @@ class Chart extends Component {
   }
 
   render() {
-    if (this.props.data.length === 0) {
+    if (this.props.trips.length === 0) {
       return null;
     }
 
     return (
       <Fragment>
-        <p>We have {this.props.data.length} trips data</p>
+        <p>We have {this.props.trips.length} trips data</p>
+        <p>We have {this.props.stations.length} stations data</p>
         <input
           type="text"
           value={this.state.value}
@@ -59,8 +61,9 @@ class Chart extends Component {
   }
 }
 
-Chart.propTypes = {
-  data: PropTypes.array.isRequired,
+Dashboard.propTypes = {
+  stations: PropTypes.array.isRequired,
+  trips: PropTypes.array.isRequired,
 };
 
-export default Chart;
+export default Dashboard;

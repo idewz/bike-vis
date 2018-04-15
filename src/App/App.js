@@ -1,8 +1,16 @@
 import React, { Component } from 'react';
-import Chart from '../Chart';
+import { BrowserRouter, Switch, Route } from 'react-router-dom';
 import { csv } from 'd3-fetch';
-import Trip from '../Trip';
-import { BrowserRouter, Link, Switch, Route } from 'react-router-dom';
+
+import Dashboard from '../Dashboard';
+
+import Station from '../models/Station';
+import Trip from '../models/Trip';
+
+import { MuiThemeProvider, createMuiTheme } from 'material-ui/styles';
+import AppBar from 'material-ui/AppBar';
+import Toolbar from 'material-ui/Toolbar';
+import Typography from 'material-ui/Typography';
 
 import './App.css';
 import logo from '../bike_white_48px.svg';
@@ -12,38 +20,49 @@ class App extends Component {
     super();
 
     this.state = {
-      data: [],
+      stations: [],
+      trips: [],
     };
   }
 
   async componentWillMount() {
-    const trips = await csv('../data/ford_gobike/mini.csv');
+    const station_data = await csv('../data/ford_gobike/stations.csv');
+    const stations = station_data.map(s => new Station(s));
 
-    this.setState({ data: trips.map(Trip) });
+    const trip_data = await csv('../data/ford_gobike/mini.csv');
+    this.setState({
+      stations,
+      trips: trip_data.map(t => new Trip(t, stations)),
+    });
   }
 
   render() {
+    const theme = createMuiTheme();
+
     return (
       <BrowserRouter>
-        <div>
-          <div className="App">
-            <header className="App-header">
+        <MuiThemeProvider theme={theme}>
+          <AppBar position="static" color="primary">
+            <Toolbar>
               <img src={logo} className="App-logo" alt="logo" />
-              <h1 className="App-title">Bike Sharing</h1>
-              <nav>
-                <Link to="/">Home</Link>
-                <Link to="/debug">Debug</Link>
-              </nav>
-            </header>
-          </div>
+              <Typography variant="title" color="inherit">
+                Bike Sharing
+              </Typography>
+            </Toolbar>
+          </AppBar>
           <Switch>
-            <Route exact path="/" component={null} />
             <Route
-              path="/debug"
-              render={() => <Chart data={this.state.data} />}
+              exact
+              path="/"
+              render={() => (
+                <Dashboard
+                  stations={this.state.stations}
+                  trips={this.state.trips}
+                />
+              )}
             />
           </Switch>
-        </div>
+        </MuiThemeProvider>
       </BrowserRouter>
     );
   }
