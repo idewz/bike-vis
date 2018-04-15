@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { BrowserRouter, Switch, Route } from 'react-router-dom';
 import { csv } from 'd3-fetch';
 
@@ -7,7 +8,11 @@ import Dashboard from '../Dashboard';
 import Station from '../models/Station';
 import Trip from '../models/Trip';
 
-import { MuiThemeProvider, createMuiTheme } from 'material-ui/styles';
+import {
+  MuiThemeProvider,
+  createMuiTheme,
+  withStyles,
+} from 'material-ui/styles';
 import AppBar from 'material-ui/AppBar';
 import Toolbar from 'material-ui/Toolbar';
 import Typography from 'material-ui/Typography';
@@ -37,7 +42,20 @@ class App extends Component {
   }
 
   render() {
-    const theme = createMuiTheme();
+    const theme = createMuiTheme({
+      overrides: {
+        MuiButton: {
+          root: {
+            borderRadius: 8,
+          },
+        },
+        MuiPaper: {
+          rounded: {
+            borderRadius: 8,
+          },
+        },
+      },
+    });
 
     return (
       <BrowserRouter>
@@ -50,22 +68,37 @@ class App extends Component {
               </Typography>
             </Toolbar>
           </AppBar>
-          <Switch>
-            <Route
-              exact
-              path="/"
-              render={() => (
-                <Dashboard
-                  stations={this.state.stations}
-                  trips={this.state.trips}
-                />
-              )}
-            />
-          </Switch>
+          <main className={this.props.classes.root}>
+            <Switch>
+              <Route
+                exact
+                path="/"
+                render={() => (
+                  <Dashboard
+                    stations={this.state.stations}
+                    trips={this.state.trips}
+                  />
+                )}
+              />
+            </Switch>
+          </main>
         </MuiThemeProvider>
       </BrowserRouter>
     );
   }
 }
 
-export default App;
+App.propTypes = {
+  classes: PropTypes.object.isRequired,
+  theme: PropTypes.object.isRequired,
+};
+
+const styles = theme => {
+  return {
+    root: {
+      marginTop: theme.spacing.unit * 3,
+    },
+  };
+};
+
+export default withStyles(styles, { withTheme: true })(App);

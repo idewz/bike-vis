@@ -11,7 +11,7 @@ function NumberCardList(props) {
     const classes = props.classes;
 
     return (
-      <Grid item key={card.title} xs={6} md={3}>
+      <Grid item key={card.title} xs={8} md={4}>
         <NumberCard {...card}>
           <card.icon className={classes.icon} style={{ fill: card.color }} />
         </NumberCard>
@@ -20,7 +20,7 @@ function NumberCardList(props) {
   };
 
   return (
-    <Grid container justify="center">
+    <Grid container justify="center" spacing={24}>
       {props.cards.map(renderCard)}
     </Grid>
   );

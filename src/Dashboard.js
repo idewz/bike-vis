@@ -1,10 +1,16 @@
-import React, { Component, Fragment } from 'react';
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import NumberCardList from './components/NumberCardList';
 
+import { withStyles } from 'material-ui/styles';
 import { blue, green } from 'material-ui/colors';
+import Grid from 'material-ui/Grid';
+import IconButton from 'material-ui/IconButton';
+import TextField from 'material-ui/TextField';
+
 import BikeIcon from 'material-ui-icons/DirectionsBike';
 import PlaceIcon from 'material-ui-icons/Place';
+import RefreshIcon from 'material-ui-icons/Refresh';
 
 class Dashboard extends Component {
   constructor(props) {
@@ -15,10 +21,19 @@ class Dashboard extends Component {
     };
 
     this.handleChange = this.handleChange.bind(this);
+    this.handleRefreshClick = this.handleRefreshClick.bind(this);
   }
 
   handleChange = event => {
     this.setState({ value: event.target.value });
+  };
+
+  handleRefreshClick = event => {
+    this.setState({
+      value: Math.floor(
+        Math.random() * Math.floor(this.props.trips.length + 1),
+      ),
+    });
   };
 
   renderRows() {
@@ -41,6 +56,7 @@ class Dashboard extends Component {
   }
 
   render() {
+    const { classes } = this.props;
     const cards = [
       {
         title: 'Trips',
@@ -57,34 +73,58 @@ class Dashboard extends Component {
     ];
 
     return (
-      <Fragment>
+      <Grid container>
         <NumberCardList cards={cards} />
+
         {this.props.trips.length !== 0 && (
-          <Fragment>
-            <input
-              type="text"
-              value={this.state.value}
-              onChange={this.handleChange}
-            />
-            <table>
-              <thead>
-                <tr>
-                  <th>Name</th>
-                  <th>Value</th>
-                </tr>
-              </thead>
-              <tbody>{this.renderRows()}</tbody>
-            </table>
-          </Fragment>
+          <Grid
+            container
+            spacing={24}
+            justify="center"
+            className={classes.grid}
+          >
+            <Grid item xs={8}>
+              <TextField
+                placeholder="Index"
+                label="Index"
+                value={this.state.value}
+                onChange={this.handleChange}
+              />
+              <IconButton aria-label="Refresh" variant="flat" color="primary">
+                <RefreshIcon onClick={this.handleRefreshClick} />
+              </IconButton>
+            </Grid>
+            <Grid item xs={8}>
+              <table>
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th>Value</th>
+                  </tr>
+                </thead>
+                <tbody>{this.renderRows()}</tbody>
+              </table>
+            </Grid>
+          </Grid>
         )}
-      </Fragment>
+      </Grid>
     );
   }
 }
 
 Dashboard.propTypes = {
+  classes: PropTypes.object.isRequired,
+  theme: PropTypes.object.isRequired,
   stations: PropTypes.array.isRequired,
   trips: PropTypes.array.isRequired,
 };
 
-export default Dashboard;
+const styles = theme => {
+  return {
+    grid: {
+      marginTop: theme.spacing.unit * 3,
+    },
+  };
+};
+
+export default withStyles(styles, { withTheme: true })(Dashboard);
