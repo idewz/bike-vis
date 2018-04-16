@@ -1,12 +1,15 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+
 import NumberCardList from './components/NumberCardList';
+import BarChart from './components/BarChart';
 
 import { withStyles } from 'material-ui/styles';
 import { blue, green } from 'material-ui/colors';
 import Grid from 'material-ui/Grid';
 import IconButton from 'material-ui/IconButton';
 import TextField from 'material-ui/TextField';
+import Typography from 'material-ui/Typography';
 
 import BikeIcon from 'material-ui-icons/DirectionsBike';
 import PlaceIcon from 'material-ui-icons/Place';
@@ -24,6 +27,10 @@ class Dashboard extends Component {
     this.handleRefreshClick = this.handleRefreshClick.bind(this);
   }
 
+  static getDerivedStateFromProps(nextProps, prevState) {
+    return null;
+  }
+
   handleChange = event => {
     this.setState({ value: event.target.value });
   };
@@ -35,6 +42,34 @@ class Dashboard extends Component {
       ),
     });
   };
+
+  ridesPerHour(trips) {
+    if (trips === undefined || trips.length === 0) {
+      return;
+    }
+
+    const bars = new Array(24).fill(0);
+
+    trips.forEach(trip => {
+      bars[trip.start_time.getHours()]++;
+    });
+
+    return bars;
+  }
+
+  ridesPerDay(trips) {
+    if (trips === undefined || trips.length === 0) {
+      return;
+    }
+
+    const bars = new Array(7).fill(0);
+
+    trips.forEach(trip => {
+      bars[trip.start_time.getDay()]++;
+    });
+
+    return bars;
+  }
 
   renderRows() {
     const t = this.props.trips[this.state.value];
@@ -56,7 +91,7 @@ class Dashboard extends Component {
   }
 
   render() {
-    const { classes } = this.props;
+    const { trips, stations, classes } = this.props;
     const cards = [
       {
         title: 'Trips',
@@ -72,41 +107,58 @@ class Dashboard extends Component {
       },
     ];
 
+    const hoursData = this.ridesPerHour(trips);
+    const hoursBand = Array.from(new Array(24), (x, i) => i);
+
+    const daysData = this.ridesPerDay(trips);
+    const daysBand = ['S', 'M', 'Tu', 'W', 'Th', 'F', 'Sa'];
+
     return (
       <Grid container>
         <NumberCardList cards={cards} />
 
-        {this.props.trips.length !== 0 && (
-          <Grid
-            container
-            spacing={24}
-            justify="center"
-            className={classes.grid}
-          >
-            <Grid item xs={8}>
-              <TextField
-                placeholder="Index"
-                label="Index"
-                value={this.state.value}
-                onChange={this.handleChange}
-              />
-              <IconButton aria-label="Refresh" variant="flat" color="primary">
-                <RefreshIcon onClick={this.handleRefreshClick} />
-              </IconButton>
-            </Grid>
-            <Grid item xs={8}>
-              <table>
-                <thead>
-                  <tr>
-                    <th>Name</th>
-                    <th>Value</th>
-                  </tr>
-                </thead>
-                <tbody>{this.renderRows()}</tbody>
-              </table>
-            </Grid>
+        <Grid container spacing={24} justify="center" className={classes.grid}>
+          <Grid item xs={8}>
+            <Typography variant="headline">Number of Rides by Hour</Typography>
           </Grid>
-        )}
+          <Grid item xs={8}>
+            <BarChart data={hoursData} bands={hoursBand} />
+          </Grid>
+
+          <Grid item xs={8}>
+            <Typography variant="headline">Number of Rides by Day</Typography>
+          </Grid>
+          <Grid item xs={8}>
+            <BarChart data={daysData} bands={daysBand} />
+          </Grid>
+
+          <Grid item xs={8}>
+            <Typography variant="headline">Our data</Typography>
+          </Grid>
+          <Grid item xs={8}>
+            <TextField
+              placeholder="Index"
+              label="Index"
+              value={this.state.value}
+              onChange={this.handleChange}
+            />
+            <IconButton aria-label="Refresh" variant="flat" color="primary">
+              <RefreshIcon onClick={this.handleRefreshClick} />
+            </IconButton>
+          </Grid>
+
+          <Grid item xs={8}>
+            <table>
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Value</th>
+                </tr>
+              </thead>
+              <tbody>{this.renderRows()}</tbody>
+            </table>
+          </Grid>
+        </Grid>
       </Grid>
     );
   }
