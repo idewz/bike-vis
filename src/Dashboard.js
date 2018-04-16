@@ -77,14 +77,14 @@ class Dashboard extends Component {
 
         <Grid container spacing={24} justify="center" className={classes.grid}>
           <Grid item xs={8}>
-            <Typography variant="headline">Number of Rides by Hour</Typography>
+            <Typography variant="headline">Number of Rides per Hour</Typography>
           </Grid>
           <Grid item xs={8}>
             <BarChart data={hoursData} bands={hoursBand} />
           </Grid>
 
           <Grid item xs={8}>
-            <Typography variant="headline">Number of Rides by Day</Typography>
+            <Typography variant="headline">Number of Rides per Day</Typography>
           </Grid>
           <Grid item xs={8}>
             <BarChart data={daysData} bands={daysBand} />
@@ -92,6 +92,9 @@ class Dashboard extends Component {
 
           <Grid item xs={8}>
             <Typography variant="headline">Our data</Typography>
+            <Typography variant="subheading">
+              sample trips data for testing
+            </Typography>
           </Grid>
           <Grid item xs={8}>
             <DataViewer trips={this.props.trips} />
