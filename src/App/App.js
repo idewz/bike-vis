@@ -20,6 +20,21 @@ import Typography from 'material-ui/Typography';
 import './App.css';
 import logo from '../bike_white_48px.svg';
 
+const theme = createMuiTheme({
+  overrides: {
+    MuiButton: {
+      root: {
+        borderRadius: 8,
+      },
+    },
+    MuiPaper: {
+      rounded: {
+        borderRadius: 8,
+      },
+    },
+  },
+});
+
 class App extends Component {
   constructor() {
     super();
@@ -45,21 +60,6 @@ class App extends Component {
   }
 
   render() {
-    const theme = createMuiTheme({
-      overrides: {
-        MuiButton: {
-          root: {
-            borderRadius: 8,
-          },
-        },
-        MuiPaper: {
-          rounded: {
-            borderRadius: 8,
-          },
-        },
-      },
-    });
-
     return (
       <BrowserRouter>
         <MuiThemeProvider theme={theme}>
