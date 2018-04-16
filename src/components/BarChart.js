@@ -90,8 +90,8 @@ class BarChart extends Component {
 
     function handleMouseMove(d) {
       tooltip
-        .style('top', window.event.pageY - 40 + 'px')
-        .style('left', window.event.pageX + 10 + 'px');
+        .style('top', d3.event.pageY - 40 + 'px')
+        .style('left', d3.event.pageX + 10 + 'px');
     }
 
     function handleMouseOut(d) {
