@@ -25,29 +25,25 @@ class Dashboard extends Component {
   }
 
   ridesPerHour(trips) {
-    if (trips === undefined || trips.length === 0) {
-      return;
-    }
-
     const bars = new Array(24).fill(0);
 
-    trips.forEach(trip => {
-      bars[trip.start_time.getHours()]++;
-    });
+    if (trips !== undefined && trips.length !== 0) {
+      trips.forEach(trip => {
+        bars[trip.start_time.getHours()]++;
+      });
+    }
 
     return bars;
   }
 
   ridesPerDay(trips) {
-    if (trips === undefined || trips.length === 0) {
-      return;
-    }
-
     const bars = new Array(7).fill(0);
 
-    trips.forEach(trip => {
-      bars[trip.start_time.getDay()]++;
-    });
+    if (trips !== undefined && trips.length !== 0) {
+      trips.forEach(trip => {
+        bars[trip.start_time.getDay()]++;
+      });
+    }
 
     return bars;
   }

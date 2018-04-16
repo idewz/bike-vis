@@ -1,12 +1,8 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
+import * as d3 from 'd3';
 import { red } from 'material-ui/colors';
-
-import { max } from 'd3-array';
-import { axisBottom } from 'd3-axis';
-import { scaleBand, scaleLinear } from 'd3-scale';
-import { select } from 'd3-selection';
 
 class BarChart extends Component {
   constructor(props) {
@@ -15,12 +11,24 @@ class BarChart extends Component {
     this.createBarChart = this.createBarChart.bind(this);
   }
 
+  chart = { height: 100, width: 800 };
+  yScale = d3.scaleLinear().range([100, 0]);
+
   componentDidMount() {
     this.createBarChart();
   }
 
   componentDidUpdate() {
-    this.createBarChart();
+    this.yScale.domain([0, d3.max(this.props.data)]);
+
+    d3
+      .select(this.node)
+      .selectAll('rect')
+      .data(this.props.data)
+      .transition()
+      .delay((d, i) => i / this.props.data.length * 500)
+      .attr('y', (d, i) => this.yScale(d))
+      .attr('height', d => this.chart.height - this.yScale(d));
   }
 
   createBarChart() {
@@ -31,25 +39,22 @@ class BarChart extends Component {
     }
 
     const node = this.node;
-    const svg = select(node);
-    const chart = { height: 100, width: 800 };
+    const svg = d3.select(node);
 
-    const xScale = scaleBand()
+    const xScale = d3
+      .scaleBand()
       .domain(bands)
-      .range([0, chart.width])
+      .range([0, this.chart.width])
       .padding(0.2);
-
-    const yScale = scaleLinear()
-      .domain([0, max(data)])
-      .range([chart.height, 0]);
 
     svg
       .append('g')
       .attr('class', 'axis')
-      .attr('transform', `translate(0, ${chart.height})`)
-      .call(axisBottom(xScale).tickSize(0));
+      .attr('transform', `translate(0, ${this.chart.height})`)
+      .call(d3.axisBottom(xScale).tickSize(0));
 
-    const tooltip = select('body')
+    const tooltip = d3
+      .select('body')
       .append('div')
       .attr('class', 'tooltip');
 
@@ -69,8 +74,8 @@ class BarChart extends Component {
       .selectAll('rect')
       .data(data)
       .attr('x', (d, i) => xScale(bands[i]))
-      .attr('y', d => yScale(d))
-      .attr('height', d => chart.height - yScale(d))
+      .attr('y', d => this.yScale(d))
+      .attr('height', d => this.chart.height - this.yScale(d))
       .attr('width', xScale.bandwidth())
       .style('fill', red[400])
       .on('mouseover', handleMouseOver)
@@ -78,7 +83,7 @@ class BarChart extends Component {
       .on('mouseout', handleMouseOut);
 
     function handleMouseOver(d) {
-      select(this).style('fill', red[800]);
+      d3.select(this).style('fill', red[800]);
       tooltip.text(d);
       tooltip.style('visibility', 'visible');
     }
@@ -90,7 +95,7 @@ class BarChart extends Component {
     }
 
     function handleMouseOut(d) {
-      select(this).style('fill', red[400]);
+      d3.select(this).style('fill', red[400]);
       tooltip.style('visibility', 'hidden');
     }
   }
