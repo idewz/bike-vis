@@ -15,3 +15,8 @@ body {
 
   visibility: hidden;
 }
+
+.big-percentage {
+  font-size: 2em;
+  fill: white;
+}

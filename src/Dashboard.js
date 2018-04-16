@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 
 import BarChart from './components/BarChart';
 import DataViewer from './components/DataViewer';
+import MenWomenChart from './components/MenWomenChart';
 import NumberCardList from './components/NumberCardList';
 
 import { withStyles } from 'material-ui/styles';
@@ -88,6 +89,13 @@ class Dashboard extends Component {
           </Grid>
           <Grid item xs={8}>
             <BarChart data={daysData} bands={daysBand} />
+          </Grid>
+
+          <Grid item xs={8}>
+            <Typography variant="headline">Men vs Women</Typography>
+          </Grid>
+          <Grid item xs={8}>
+            <MenWomenChart trips={trips} />
           </Grid>
 
           <Grid item xs={8}>
