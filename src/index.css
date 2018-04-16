@@ -17,6 +17,11 @@ body {
 }
 
 .big-percentage {
-  font-size: 2em;
+  font-size: 1.2em;
+  fill: white;
+}
+
+text.label {
+  font-size: 1.2em;
   fill: white;
 }

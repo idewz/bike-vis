@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
 import * as d3 from 'd3';
-import { blue, pink } from 'material-ui/colors';
+import { indigo, pink, blueGrey } from 'material-ui/colors';
 
 class MenWomenChart extends Component {
   constructor(props) {
@@ -12,6 +12,8 @@ class MenWomenChart extends Component {
     this.updateChart = this.updateChart.bind(this);
   }
 
+  colors = [indigo[500], pink[400], blueGrey[300]];
+
   componentDidMount() {
     this.createChart();
   }
@@ -20,71 +22,92 @@ class MenWomenChart extends Component {
     this.updateChart();
   }
 
+  positionX(percents, i) {
+    const svg = d3.select(this.node);
+    const width = svg.attr('width');
+
+    switch (i) {
+      case 0:
+        return 0;
+
+      case 1:
+        return percents[i - 1] * width;
+
+      case 2:
+        return width - percents[i] * width;
+
+      default:
+        return 0;
+    }
+  }
+
   createChart() {
     const svg = d3.select(this.node);
     const width = svg.attr('width');
     const height = svg.attr('height');
+    const data = [50, 50, 0];
+    const percents = data.map(d => d / 100);
 
     svg
+      .selectAll('rect')
+      .data(percents)
+      .enter()
       .append('rect')
-      .attr('class', 'rect--men')
-      .attr('width', width / 2)
+      .attr('width', d => d * width)
       .attr('height', height)
-      .style('fill', blue[500]);
-
-    svg
-      .append('rect')
-      .attr('class', 'rect--women')
-      .attr('width', width / 2)
-      .attr('height', height)
-      .attr('x', width / 2)
-      .style('fill', pink[300]);
+      .attr('x', (d, i) => this.positionX(percents, i))
+      .style('fill', (d, i) => this.colors[i]);
   }
 
   updateChart() {
     const svg = d3.select(this.node);
     const width = svg.attr('width');
-
-    let nMen = 0;
-    let nWomen = 0;
+    const data = new Array(3).fill(0);
 
     this.props.trips.forEach(t => {
       if (t.member_gender === 'Male') {
-        nMen++;
+        data[0]++;
       } else if (t.member_gender === 'Female') {
-        nWomen++;
+        data[1]++;
+      } else {
+        data[2]++;
       }
     });
 
-    const total = nMen + nWomen;
-    const percentMen = nMen / total;
-    const percentWomen = nWomen / total;
+    const total = data.reduce(
+      (previousValue, currentValue) => previousValue + currentValue,
+    );
+    const percents = data.map(d => d / total);
 
-    const rectMen = d3.select('.rect--men');
-    const rectWomen = d3.select('.rect--women');
+    const rects = svg.selectAll('rect');
     const gText = svg.append('g').attr('transform', `translate(0, 60)`);
 
-    rectMen
+    rects
+      .data(percents)
       .transition()
-      .attr('width', width * percentMen)
+      .duration(750)
+      .ease(d3.easeCubicIn)
+      .attr('width', (d, i) => d * width)
+      .attr('x', (d, i) => this.positionX(percents, i))
       .on('end', () => {
         gText
+          .selectAll('text.big-percentage')
+          .data(percents)
+          .enter()
           .append('text')
-          .attr('x', 50)
+          .attr('x', (d, i) => this.positionX(percents, i) + 16)
           .attr('class', 'big-percentage')
-          .text(`${(percentMen * 100).toFixed(2)}%`);
-      });
+          .text(d => `${(d * 100).toFixed(2)}%`);
 
-    rectWomen
-      .transition()
-      .attr('width', width * percentWomen)
-      .attr('x', width * percentMen)
-      .on('end', () => {
         gText
+          .selectAll('text.label')
+          .data(['Men', 'Women', 'Other'])
+          .enter()
           .append('text')
-          .attr('x', width * percentMen + 50)
-          .attr('class', 'big-percentage')
-          .text(`${(percentWomen * 100).toFixed(2)}%`);
+          .attr('x', (d, i) => this.positionX(percents, i) + 16)
+          .attr('y', -24)
+          .attr('class', 'label')
+          .text(d => d);
       });
   }
 
