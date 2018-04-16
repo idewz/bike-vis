@@ -5,9 +5,11 @@
 ### Requirements
 
  - [`git-lfs`](https://git-lfs.github.com/)
- - `node` and `yarn` (or `npm`)
+ - `node` and [`yarn`](https://yarnpkg.com/en/) (or `npm`)
+ - [Visual Studio Code](https://code.visualstudio.com/) with
+ [Prettier](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode) (recommended)
 
 
-To begin the development, run `yarn start` or `npm start`.
+To begin the development, run `yarn start` (or `npm start`).
 
-To create a production bundle, use `yarn build` or `npm run build`.
+To create a production bundle, use `yarn build` (or `npm run build`).
