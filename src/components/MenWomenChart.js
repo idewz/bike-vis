@@ -12,8 +12,6 @@ class MenWomenChart extends Component {
     this.updateChart = this.updateChart.bind(this);
   }
 
-  chart = { height: 100, width: 800 };
-
   componentDidMount() {
     this.createChart();
   }
@@ -46,7 +44,6 @@ class MenWomenChart extends Component {
   updateChart() {
     const svg = d3.select(this.node);
     const width = svg.attr('width');
-    const height = svg.attr('height');
 
     let nMen = 0;
     let nWomen = 0;
