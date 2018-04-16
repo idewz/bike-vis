@@ -33,8 +33,8 @@ NumberCardList.propTypes = {
 
 const styles = theme => ({
   icon: {
-    height: '1.4em',
-    width: '1.4em',
+    height: '1em',
+    width: '1em',
     fill: props => props.color,
   },
 });

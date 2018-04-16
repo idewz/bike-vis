@@ -32,7 +32,6 @@ class BarChart extends Component {
 
     const node = this.node;
     const svg = select(node);
-    const margin = 24;
     const chart = { height: 100, width: 800 };
 
     const xScale = scaleBand()
@@ -44,7 +43,7 @@ class BarChart extends Component {
       .domain([0, max(data)])
       .range([chart.height, 0]);
 
-    const g = svg
+    svg
       .append('g')
       .attr('class', 'axis')
       .attr('transform', `translate(0, ${chart.height})`)

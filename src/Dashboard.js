@@ -53,7 +53,7 @@ class Dashboard extends Component {
   }
 
   render() {
-    const { trips, stations, classes } = this.props;
+    const { trips, classes } = this.props;
     const cards = [
       {
         title: 'Trips',
