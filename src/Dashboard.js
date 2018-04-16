@@ -12,6 +12,7 @@ import Grid from 'material-ui/Grid';
 import Typography from 'material-ui/Typography';
 
 import BikeIcon from 'material-ui-icons/DirectionsBike';
+import InfoIcon from 'material-ui-icons/InfoOutline';
 import PlaceIcon from 'material-ui-icons/Place';
 
 class Dashboard extends Component {
@@ -99,9 +100,14 @@ class Dashboard extends Component {
           </Grid>
 
           <Grid item xs={8}>
-            <Typography variant="headline">Our data</Typography>
+            <Typography variant="headline">
+              Our data &nbsp;
+              <a href="https://github.com/idewz/cs560-project/tree/master/public/data/ford_gobike">
+                <InfoIcon style={{ fontSize: '0.7em' }} />
+              </a>
+            </Typography>
             <Typography variant="subheading">
-              sample trips data for testing
+              sample trips data from March 2018 for development{' '}
             </Typography>
           </Grid>
           <Grid item xs={8}>
