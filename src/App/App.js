@@ -32,7 +32,10 @@ class App extends Component {
 
   async componentWillMount() {
     const station_data = await csv('../data/ford_gobike/stations.csv');
-    const stations = station_data.map(s => new Station(s));
+    const stations = [];
+    station_data.forEach(s => {
+      stations[s.id] = new Station(s);
+    });
 
     const trip_data = await csv('../data/ford_gobike/mini.csv');
     this.setState({
