@@ -50,6 +50,10 @@ class BarChart extends Component {
       .attr('transform', `translate(0, ${chart.height})`)
       .call(axisBottom(xScale).tickSize(0));
 
+    const tooltip = select('body')
+      .append('div')
+      .attr('class', 'tooltip');
+
     svg
       .selectAll('rect')
       .data(data)
@@ -65,11 +69,31 @@ class BarChart extends Component {
     svg
       .selectAll('rect')
       .data(data)
-      .style('fill', red[500])
       .attr('x', (d, i) => xScale(bands[i]))
       .attr('y', d => yScale(d))
       .attr('height', d => chart.height - yScale(d))
-      .attr('width', xScale.bandwidth());
+      .attr('width', xScale.bandwidth())
+      .style('fill', red[400])
+      .on('mouseover', handleMouseOver)
+      .on('mousemove', handleMouseMove)
+      .on('mouseout', handleMouseOut);
+
+    function handleMouseOver(d) {
+      select(this).style('fill', red[800]);
+      tooltip.text(d);
+      tooltip.style('visibility', 'visible');
+    }
+
+    function handleMouseMove(d) {
+      tooltip
+        .style('top', window.event.pageY - 40 + 'px')
+        .style('left', window.event.pageX + 10 + 'px');
+    }
+
+    function handleMouseOut(d) {
+      select(this).style('fill', red[400]);
+      tooltip.style('visibility', 'hidden');
+    }
   }
 
   render() {
