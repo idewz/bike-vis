@@ -4,7 +4,6 @@
 
 ### Requirements
 
- - [`git-lfs`](https://git-lfs.github.com/)
  - `node` and [`yarn`](https://yarnpkg.com/en/) (or `npm`)
  - [Visual Studio Code](https://code.visualstudio.com/) with
  [Prettier](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode) (recommended)
