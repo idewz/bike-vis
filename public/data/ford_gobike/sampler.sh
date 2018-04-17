@@ -1,9 +1,11 @@
 #!/usr/bin/env sh
 
+# cut the head
 head -1 201803_fordgobike_tripdata.csv \
   | cut -d',' -f 1-4,8,12-15 \
   > mini.csv
 
+# shuffle 10,000 records
 cat 201803_fordgobike_tripdata.csv \
   | cut -d',' -f 1-4,8,12-15 \
   | gshuf -n 10000 \
