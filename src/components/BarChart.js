@@ -9,6 +9,7 @@ class BarChart extends Component {
     super(props);
 
     this.createBarChart = this.createBarChart.bind(this);
+    this.updateBarChart = this.updateBarChart.bind(this);
   }
 
   chart = { height: 100, width: 800 };
@@ -19,16 +20,7 @@ class BarChart extends Component {
   }
 
   componentDidUpdate() {
-    this.yScale.domain([0, d3.max(this.props.data)]);
-
-    d3
-      .select(this.node)
-      .selectAll('rect')
-      .data(this.props.data)
-      .transition()
-      .delay((d, i) => i / this.props.data.length * 500)
-      .attr('y', (d, i) => this.yScale(d))
-      .attr('height', d => this.chart.height - this.yScale(d));
+    this.updateBarChart();
   }
 
   createBarChart() {
@@ -98,6 +90,19 @@ class BarChart extends Component {
       d3.select(this).style('fill', red[400]);
       tooltip.style('visibility', 'hidden');
     }
+  }
+
+  updateBarChart() {
+    this.yScale.domain([0, d3.max(this.props.data)]);
+
+    d3
+      .select(this.node)
+      .selectAll('rect')
+      .data(this.props.data)
+      .transition()
+      .delay((d, i) => i / this.props.data.length * 500)
+      .attr('y', (d, i) => this.yScale(d))
+      .attr('height', d => this.chart.height - this.yScale(d));
   }
 
   render() {
