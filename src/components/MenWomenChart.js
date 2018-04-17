@@ -65,10 +65,8 @@ class MenWomenChart extends Component {
     const data = new Array(3).fill(0);
 
     this.props.trips.forEach(t => {
-      if (t.member_gender === 'Male') {
-        data[0]++;
-      } else if (t.member_gender === 'Female') {
-        data[1]++;
+      if (t.member_gender !== -1) {
+        data[t.member_gender]++;
       } else {
         data[2]++;
       }
