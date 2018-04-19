@@ -2,11 +2,12 @@ const Trip = (obj, stations) => ({
   bike_id: +obj.bike_id,
   duration: +obj.duration_sec,
 
+  // TODO: Timezone is not correct in Safari
   start_station: stations[+obj.start_station_id],
-  start_time: new Date(obj.start_time.replace(' ', 'T') + 'Z'),
+  start_time: new Date(obj.start_time.replace(' ', 'T')),
 
   end_station: stations[+obj.end_station_id],
-  end_time: new Date(obj.end_time.replace(' ', 'T') + 'Z'),
+  end_time: new Date(obj.end_time.replace(' ', 'T')),
 
   user_type: obj.user_type,
   member_birth_year: +obj.member_birth_year,
