@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+
+<head>
+  <meta charset="utf-8">
+  <script src="https://d3js.org/d3.v5.min.js"></script>
+  <style>
+    * {
+      font-family: sans-serif;
+    }
+  </style>
+</head>
+
+<body>
+
+  <svg width="960" height="500"></svg>
+
+  <script>
+    class Trip {
+      constructor(obj, stations) {
+
+        this.bike_id = +obj.bike_id;
+        this.duration = +obj.duration_sec;
+
+        // TODO: Timezone is not correct in Safari
+        this.start_station = stations[+obj.start_station_id];
+        this.start_time = new Date(obj.start_time.replace(' ', 'T'));
+        this.end_station = stations[+obj.end_station_id];
+        this.end_time = new Date(obj.end_time.replace(' ', 'T'));
+        this.user_type = obj.user_type;
+        this.member_birth_year = +obj.member_birth_year;
+        this.member_gender = obj.member_gender;
+      }
+    }
+
+    class Station {
+      constructor(obj) {
+        this.id = +obj.id;
+        this.name = obj.name;
+        this.latitude = +obj.latitude;
+        this.longitude = +obj.longitude;
+      }
+
+      toString() { return this.name; }
+    }
+
+    const svg = d3.select("svg");
+
+    async function main() {
+      const station_data = await d3.csv('data/ford_gobike/stations.csv');
+      const stations = [];
+      station_data.forEach(s => {
+        stations[s.id] = new Station(s);
+      });
+
+      const trip_data = await d3.csv('data/ford_gobike/mini.csv');
+      const trips = trip_data.map(t => new Trip(t, stations));
+
+      console.log(trips[0], trips[1]);
+
+      svg.append('rect')
+        .attr('x', 0)
+        .attr('y', 0)
+        .attr('width', 900)
+        .attr('height', 500);
+    };
+
+    main();
+
+  </script>
+</body>
