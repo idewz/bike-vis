@@ -16,7 +16,8 @@
       }
     ],
     "react/jsx-uses-vars": "error",
-    "react/no-did-mount-set-state": ["off"]
+    "react/no-did-mount-set-state": ["off"],
+    "comma-dangle": ["always"]
   },
   "env": {
     "browser": true,

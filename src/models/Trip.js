@@ -11,7 +11,7 @@ const Trip = (obj, stations) => ({
 
   user_type: obj.user_type,
   member_birth_year: +obj.member_birth_year,
-  member_gender: obj.member_gender,
+  member_gender: +obj.member_gender,
 });
 
 export default Trip;

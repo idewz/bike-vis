@@ -1,12 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { BrowserRouter, Switch, Route } from 'react-router-dom';
-import { csv } from 'd3-fetch';
-
-import Dashboard from '../Dashboard';
-
-import Station from '../models/Station';
-import Trip from '../models/Trip';
+import { csv } from 'd3';
 
 import {
   MuiThemeProvider,
@@ -14,8 +9,14 @@ import {
   withStyles,
 } from 'material-ui/styles';
 import AppBar from 'material-ui/AppBar';
+import Tabs, { Tab } from 'material-ui/Tabs';
 import Toolbar from 'material-ui/Toolbar';
 import Typography from 'material-ui/Typography';
+
+import Bubble from '../components/Bubble';
+import Dashboard from '../Dashboard';
+import Station from '../models/Station';
+import Trip from '../models/Trip';
 
 import './App.css';
 import logo from '../bike_white_48px.svg';
@@ -42,7 +43,10 @@ class App extends Component {
     this.state = {
       stations: [],
       trips: [],
+      value: '/',
     };
+
+    this.handleTabChange = this.handleTabChange.bind(this);
   }
 
   async componentWillMount() {
@@ -59,6 +63,11 @@ class App extends Component {
     });
   }
 
+  handleTabChange(event, value, history) {
+    this.setState({ value });
+    history.push(value);
+  }
+
   render() {
     return (
       <BrowserRouter>
@@ -70,6 +79,17 @@ class App extends Component {
                 Bike Sharing
               </Typography>
             </Toolbar>
+            <Route
+              render={({ history }) => (
+                <Tabs
+                  value={this.state.value}
+                  onChange={(e, v) => this.handleTabChange(e, v, history)}
+                >
+                  <Tab value="/" label="Dashboard" />
+                  <Tab value="/force" label="Force" />
+                </Tabs>
+              )}
+            />
           </AppBar>
           <main className={this.props.classes.root}>
             <Switch>
@@ -82,6 +102,10 @@ class App extends Component {
                     trips={this.state.trips}
                   />
                 )}
+              />
+              <Route
+                path="/force"
+                render={() => <Bubble trips={this.state.trips} />}
               />
             </Switch>
           </main>
