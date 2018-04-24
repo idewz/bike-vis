@@ -1,0 +1,25 @@
+{
+  "extends": [
+    "airbnb",
+    "react-app",
+    "eslint:recommended",
+    "plugin:react/recommended"
+  ],
+  "plugins": ["react", "jsx-a11y", "import"],
+  "rules": {
+    "jsx-a11y/href-no-hash": "off",
+    "react/forbid-prop-types": ["off"],
+    "react/jsx-filename-extension": [
+      1,
+      {
+        "extensions": [".js", ".jsx"]
+      }
+    ],
+    "react/jsx-uses-vars": "error",
+    "react/no-did-mount-set-state": ["off"]
+  },
+  "env": {
+    "browser": true,
+    "node": true
+  }
+}
