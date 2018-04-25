@@ -86,7 +86,7 @@ class App extends Component {
                   onChange={(e, v) => this.handleTabChange(e, v, history)}
                 >
                   <Tab value="/" label="Dashboard" />
-                  <Tab value="/force" label="Force" />
+                  <Tab value="/member" label="Member" />
                 </Tabs>
               )}
             />
@@ -104,7 +104,7 @@ class App extends Component {
                 )}
               />
               <Route
-                path="/force"
+                path="/member"
                 render={() => <Bubble trips={this.state.trips} />}
               />
             </Switch>
