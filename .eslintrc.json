@@ -17,7 +17,13 @@
     ],
     "react/jsx-uses-vars": "error",
     "react/no-did-mount-set-state": ["off"],
-    "comma-dangle": ["always"]
+    "comma-dangle": ["error", {
+      "arrays": "always-multiline",
+      "objects": "always-multiline",
+      "imports": "always-multiline",
+      "exports": "always-multiline",
+      "functions": "ignore"
+  }]
   },
   "env": {
     "browser": true,

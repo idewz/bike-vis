@@ -28,7 +28,6 @@ class Matrix extends Component {
     const { stations } = this.props;
     const svg = d3.select(this.node);
     const width = svg.attr("width");
-    const height = svg.attr("height");
     const matrix = [];
     const xScale = d3.scaleBand().range([0, width]);
     const c = d3.scaleOrdinal(d3.schemeCategory10).domain(d3.range(10));
@@ -68,14 +67,19 @@ class Matrix extends Component {
 
     xScale.domain(stations.map(e => e.id));
 
+    const tooltip = d3
+      .select("body")
+      .append("div")
+      .attr("class", "tooltip");
+
     var column = svg
       .selectAll(".column")
-      .data(stations)
+      .data(group_trips)
       .enter()
       .append("g")
       .attr("class", "column")
       .attr("transform", function(d) {
-        return "translate(" + xScale(d.id) + ") rotate(-90)";
+        return "translate(" + xScale(stations[d.key].id) + ") rotate(-90)";
       });
 
     column.append("line").attr("x1", -width);
@@ -83,11 +87,11 @@ class Matrix extends Component {
     column
       .append("text")
       .attr("x", 6)
-      .attr("y", xScale.bandwidth())
+      .attr("y", xScale.bandwidth() / 2)
       .attr("dy", ".32em")
       .attr("text-anchor", "start")
       .text(function(d, i) {
-        return d.name;
+        return stations[d.key].name;
       })
       .style("font-size", "3px");
 
@@ -134,25 +138,49 @@ class Matrix extends Component {
         .style("fill", function(d) {
           return c(d.value);
         })
-        .on("mouseover", function(d) {
-          mouseover(value.key, stations[d.key].id);
-        })
-        .on("mouseout", mouseout);
+        .on("mouseover", d => handleMouseOver(d, value.key))
+        .on("mouseout", handleMouseOut)
+        .on("mousemove", handleMouseMove);
     }
 
-    function mouseover(x, y) {
-      d3.selectAll(".column text").classed("active", function(d, i) {
-        return stations[i].id === y;
+    function handleMouseOver(d, key) {
+      let text = "";
+      const columnId = parseInt(d.key, 10);
+
+      // const columnSelector = `.column:nth-child(${columnId})`;
+      // d3
+      //   .select(columnSelector)
+      //   .select("text")
+      //   .classed("active", true);
+
+      d3.selectAll(".row text").classed("active", function(e, i) {
+        return e.key === key;
       });
-      d3.selectAll(".row text").classed("active", function(d, i) {
-        return d.key === x;
+
+      //Gam added this
+      d3.selectAll(".column text").classed("active", function(e, i) {
+        return d.key === e.key;
       });
+
+      text += `From: ${stations[columnId].name}
+              <br>To: ${stations[key].name}<br/>
+              <br/>${d.value} trips`;
+
+      tooltip.html(text);
+      tooltip.style("visibility", "visible");
     }
 
-    function mouseout() {
+    function handleMouseOut(d) {
       d3.selectAll("text").classed("active", false);
       d3.selectAll("rect").attr("width", xScale.bandwidth());
       d3.selectAll("rect").attr("height", xScale.bandwidth());
+      tooltip.style("visibility", "hidden");
+    }
+
+    function handleMouseMove(d) {
+      tooltip
+        .style("top", d3.event.pageY - 32 + "px")
+        .style("left", d3.event.pageX + 8 + "px");
     }
 
     // d3.select("#order").on("change", function() {
