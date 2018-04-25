@@ -104,7 +104,6 @@ class Matrix extends Component {
 
     function get_row(value) {
       var cell = d3.select(this);
-
       cell
         .selectAll(".cell")
         .data(value.values)
@@ -121,7 +120,26 @@ class Matrix extends Component {
         })
         .style("fill", function(d) {
           return c(d.value);
-        });
+        })
+        .on("mouseover", function(d) {
+          mouseover(value.key, stations[d.key].id);
+        })
+        .on("mouseout", mouseout);
+    }
+
+    function mouseover(x, y) {
+      d3.selectAll(".column text").classed("active", function(d, i) {
+        return stations[i].id === y;
+      });
+      d3.selectAll(".row text").classed("active", function(d, i) {
+        return d.key === x;
+      });
+    }
+
+    function mouseout() {
+      d3.selectAll("text").classed("active", false);
+      d3.selectAll("rect").attr("width", xScale.bandwidth());
+      d3.selectAll("rect").attr("height", xScale.bandwidth());
     }
   }
 
@@ -129,8 +147,8 @@ class Matrix extends Component {
     return (
       <svg
         ref={node => (this.node = node)}
-        width={1100}
-        height={1100}
+        width={1000}
+        height={1000}
         className="matrix"
       />
     );
