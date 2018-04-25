@@ -69,10 +69,12 @@ class App extends Component {
   }
 
   render() {
+    const { classes } = this.props;
+
     return (
       <BrowserRouter>
         <MuiThemeProvider theme={theme}>
-          <AppBar position="static" color="primary">
+          <AppBar position="static" color="primary" className={classes.black}>
             <Toolbar>
               <img src={logo} className="App-logo" alt="logo" />
               <Typography variant="title" color="inherit">
@@ -124,6 +126,9 @@ const styles = theme => {
   return {
     root: {
       marginTop: theme.spacing.unit * 3,
+    },
+    black: {
+      backgroundColor: '#212121',
     },
   };
 };
