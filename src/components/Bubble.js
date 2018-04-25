@@ -10,6 +10,9 @@ import { withStyles } from 'material-ui/styles';
 import * as d3 from 'd3';
 import { indigo, pink } from 'material-ui/colors';
 
+const GENDER_MALE = 0;
+const GENDER_FEMALE = 1;
+
 class Bubble extends Component {
   constructor(props) {
     super(props);
@@ -118,8 +121,8 @@ class Bubble extends Component {
     const { trips } = this.props;
 
     const nCircles = 250;
-    const menTrips = trips.filter(e => e.member_gender === 0);
-    const womenTrips = trips.filter(e => e.member_gender === 1);
+    const menTrips = trips.filter(e => e.member_gender === GENDER_MALE);
+    const womenTrips = trips.filter(e => e.member_gender === GENDER_FEMALE);
     const nMen = Math.round(nCircles / trips.length * menTrips.length);
     const nWomen = Math.round(nCircles / trips.length * womenTrips.length);
 
@@ -127,8 +130,8 @@ class Bubble extends Component {
     console.log(nMen, nWomen);
 
     this.nodes = [
-      ...range(nMen).map((e, i) => ({ index: i, gender: 0 })),
-      ...range(nWomen).map((e, i) => ({ index: nMen + i, gender: 1 })),
+      ...range(nMen).map((e, i) => ({ index: i, gender: GENDER_MALE })),
+      ...range(nWomen).map((e, i) => ({ index: nMen + i, gender: GENDER_FEMALE })),
     ];
 
     const createCircles = () => {
@@ -137,9 +140,9 @@ class Bubble extends Component {
         .data(this.nodes)
         .enter()
         .append('circle')
-        .attr('class', d => (d.gender === 0 ? 'men' : 'women'))
+        .attr('class', d => (d.gender === GENDER_MALE ? 'men' : 'women'))
         .attr('r', 5)
-        .style('fill', d => (d.gender === 0 ? indigo[500] : pink[400]));
+        .style('fill', d => (d.gender === GENDER_MALE ? indigo[500] : pink[400]));
     };
 
     const createForceSimulation = () => {
