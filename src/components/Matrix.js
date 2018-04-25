@@ -51,13 +51,6 @@ class Matrix extends Component {
 
     xScale.domain(stations.map(e => e.id));
 
-    svg
-      .append('rect')
-      .attr('class', 'background')
-      .attr('width', width)
-      .attr('height', height)
-      .style('fill', '#eee');
-
     var column = svg
       .selectAll('.column')
       .data(stations)
@@ -129,7 +122,14 @@ class Matrix extends Component {
   }
 
   render() {
-    return <svg ref={node => (this.node = node)} width={1500} height={1500} />;
+    return (
+      <svg
+        ref={node => (this.node = node)}
+        width={1500}
+        height={1500}
+        className="matrix"
+      />
+    );
   }
 }
 
