@@ -55,13 +55,13 @@ class Dashboard extends Component {
     const cards = [
       {
         title: 'Trips',
-        value: this.props.trips.length.toString(),
+        value: this.props.trips.length.toLocaleString(),
         icon: BikeIcon,
         color: blue[500],
       },
       {
         title: 'Stations',
-        value: this.props.stations.length.toString(),
+        value: this.props.stations.length.toLocaleString(),
         icon: PlaceIcon,
         color: green[500],
       },
