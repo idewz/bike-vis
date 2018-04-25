@@ -91,8 +91,8 @@ class Bubble extends Component {
 
     function createGenderForces() {
       return {
-        x: d3.forceX(genderForceX).strength(forceStrength),
-        y: d3.forceY(height / 2).strength(forceStrength),
+        x: d3.forceX(genderForceX).strength(forceStrength * 2),
+        y: d3.forceY(height / 2).strength(forceStrength * 2),
       };
 
       function genderForceX(d) {
@@ -105,19 +105,19 @@ class Bubble extends Component {
     this.forceSimulation
       .force('x', this.forces[forcesName].x)
       .force('y', this.forces[forcesName].y)
-      .force('collide', d3.forceCollide(8))
+      .force('collide', d3.forceCollide(10))
       .alphaTarget(0.008)
       .restart();
 
     this.timer = setTimeout(() => {
       this.forceSimulation.stop();
-    }, 12000);
+    }, 10000);
   }
 
   createChart() {
     const { trips } = this.props;
 
-    const nCircles = 500;
+    const nCircles = 250;
     const menTrips = trips.filter(e => e.member_gender === 0);
     const womenTrips = trips.filter(e => e.member_gender === 1);
     const nMen = Math.round(nCircles / trips.length * menTrips.length);
@@ -147,7 +147,7 @@ class Bubble extends Component {
         .forceSimulation()
         .force('x', this.forces.combine.x)
         .force('y', this.forces.combine.y)
-        .force('collide', d3.forceCollide(10))
+        .force('collide', d3.forceCollide(12))
         .alphaDecay(0.05);
 
       this.forceSimulation.nodes(this.nodes).on('tick', () => {
