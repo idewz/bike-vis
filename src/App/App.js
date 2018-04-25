@@ -58,7 +58,7 @@ class App extends Component {
 
     const trip_data = await csv('../data/ford_gobike/mini.csv');
     this.setState({
-      stations,
+      stations: stations.filter(e => e !== undefined),
       trips: trip_data.map(t => new Trip(t, stations)),
     });
   }
