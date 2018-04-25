@@ -15,6 +15,7 @@ import Typography from 'material-ui/Typography';
 
 import Bubble from '../components/Bubble';
 import Dashboard from '../Dashboard';
+import Matrix from '../components/Matrix';
 import Station from '../models/Station';
 import Trip from '../models/Trip';
 
@@ -88,7 +89,8 @@ class App extends Component {
                   onChange={(e, v) => this.handleTabChange(e, v, history)}
                 >
                   <Tab value="/" label="Dashboard" />
-                  <Tab value="/member" label="Member" />
+                  <Tab value="/members" label="Members" />
+                  <Tab value="/stations" label="Stations" />
                 </Tabs>
               )}
             />
@@ -106,8 +108,17 @@ class App extends Component {
                 )}
               />
               <Route
-                path="/member"
+                path="/members"
                 render={() => <Bubble trips={this.state.trips} />}
+              />
+              <Route
+                path="/stations"
+                render={() => (
+                  <Matrix
+                    stations={this.state.stations}
+                    trips={this.state.trips}
+                  />
+                )}
               />
             </Switch>
           </main>

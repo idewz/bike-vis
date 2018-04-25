@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 
 import BarChart from './components/BarChart';
 import DataViewer from './components/DataViewer';
-import NewChart from './components/NewChart';
 import MenWomenChart from './components/MenWomenChart';
 import NumberCardList from './components/NumberCardList';
 
@@ -52,7 +51,7 @@ class Dashboard extends Component {
   }
 
   render() {
-    const { trips, stations, classes } = this.props;
+    const { trips, classes } = this.props;
     const cards = [
       {
         title: 'Trips',
@@ -98,13 +97,6 @@ class Dashboard extends Component {
           </Grid>
           <Grid item xs={8}>
             <MenWomenChart trips={trips} />
-          </Grid>
-
-          <Grid item xs={8}>
-            <Typography variant="headline">New Chart2</Typography>
-          </Grid>
-          <Grid item xs={8}>
-            <NewChart trips={trips} stations={stations} />
           </Grid>
 
           <Grid item xs={8}>

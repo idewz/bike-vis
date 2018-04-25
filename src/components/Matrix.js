@@ -1,15 +1,13 @@
-import React, { Component } from "react";
-import PropTypes from "prop-types";
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 
-import * as d3 from "d3";
-import { indigo, pink, blueGrey } from "material-ui/colors";
+import * as d3 from 'd3';
 
-class NewChart extends Component {
+class Matrix extends Component {
   constructor(props) {
     super(props);
 
     this.createChart = this.createChart.bind(this);
-    this.updateChart = this.updateChart.bind(this);
   }
 
   componentDidMount() {
@@ -17,34 +15,22 @@ class NewChart extends Component {
   }
 
   componentDidUpdate() {
-    this.updateChart();
+    this.createChart();
   }
 
   createChart() {
+    const { stations } = this.props;
     const svg = d3.select(this.node);
-    const width = svg.attr("width");
-    const height = svg.attr("height");
-  }
-
-  updateChart() {
-    const { trips } = this.props;
-    const svg = d3.select(this.node);
-    const width = svg.attr("width");
-    const height = svg.attr("height");
-    const margin = { top: 80, right: 180, bottom: 100, left: 80 };
+    const width = svg.attr('width');
+    const height = svg.attr('height');
     const matrix = [];
     const xScale = d3.scaleBand().range([0, width]);
-    const z = d3
-      .scaleLinear()
-      .domain([0, 4])
-      .clamp(true);
     const c = d3.scaleOrdinal(d3.schemeCategory10).domain(d3.range(10));
-    const stations = this.props.stations.filter(e => e !== undefined);
 
     this.props.trips.forEach((t, i) => {
       matrix.push({
         x: stations.findIndex(e => e.id === t.start_station.id),
-        y: stations.findIndex(e => e.id === t.end_station.id)
+        y: stations.findIndex(e => e.id === t.end_station.id),
       });
     });
 
@@ -64,77 +50,77 @@ class NewChart extends Component {
     xScale.domain(stations.map(e => e.id));
 
     svg
-      .append("rect")
-      .attr("class", "background")
-      .attr("width", width)
-      .attr("height", height)
-      .style("fill", "#eee");
+      .append('rect')
+      .attr('class', 'background')
+      .attr('width', width)
+      .attr('height', height)
+      .style('fill', '#eee');
 
     var column = svg
-      .selectAll(".column")
+      .selectAll('.column')
       .data(stations)
       .enter()
-      .append("g")
-      .attr("class", "column")
-      .attr("transform", function(d) {
-        return "translate(" + xScale(d.id) + ") rotate(-90)";
+      .append('g')
+      .attr('class', 'column')
+      .attr('transform', function(d) {
+        return 'translate(' + xScale(d.id) + ') rotate(-90)';
       });
 
-    column.append("line").attr("x1", -width);
+    column.append('line').attr('x1', -width);
 
     column
-      .append("text")
-      .attr("x", 6)
-      .attr("y", xScale.bandwidth())
-      .attr("dy", ".32em")
-      .attr("text-anchor", "start")
+      .append('text')
+      .attr('x', 6)
+      .attr('y', xScale.bandwidth())
+      .attr('dy', '.32em')
+      .attr('text-anchor', 'start')
       .text(function(d, i) {
         return d.name;
       })
-      .style("font-size", "3px");
+      .style('font-size', '3px');
 
     var row = svg
-      .selectAll(".row")
+      .selectAll('.row')
       .data(group_trips)
       .enter()
-      .append("g")
-      .attr("class", "row")
-      .attr("transform", function(d) {
-        return "translate(0," + xScale(stations[d.key].id) + ")";
+      .append('g')
+      .attr('class', 'row')
+      .attr('transform', function(d) {
+        return 'translate(0,' + xScale(stations[d.key].id) + ')';
       })
       .each(get_row);
 
-    row.append("line").attr("x2", width);
+    row.append('line').attr('x2', width);
 
     row
-      .append("text")
-      .attr("x", -6)
-      .attr("y", xScale.bandwidth())
-      .attr("dy", ".32em")
-      .attr("text-anchor", "end")
+      .append('text')
+      .attr('x', -6)
+      .attr('y', xScale.bandwidth())
+      .attr('dy', '.32em')
+      .attr('text-anchor', 'end')
       .text(function(d, i) {
         return stations[d.key].name;
       })
-      .style("font-size", "3px");
+      .style('font-size', '3px');
 
     function get_row(value) {
       var cell = d3.select(this);
 
       cell
-        .selectAll(".cell")
+        .selectAll('.cell')
         .data(value.values)
         .enter()
-        .append("rect")
-        .attr("class", "cell")
-        .attr("x", function(d) {
+        .append('rect')
+        .attr('class', 'cell')
+        .attr('x', function(d) {
           return xScale(stations[d.key].id);
         })
-        .attr("width", xScale.bandwidth())
-        .attr("height", xScale.bandwidth())
+        .attr('width', xScale.bandwidth())
+        .attr('height', xScale.bandwidth())
         // .style("fill-opacity", function(d) {
         //   return z(d.value);
         // })
-        .style("fill", function(d) {
+        .style('fill', function(d) {
           return c(d.value);
         });
     }
@@ -145,9 +131,9 @@ class NewChart extends Component {
   }
 }
 
-NewChart.propTypes = {
+Matrix.propTypes = {
   trips: PropTypes.array.isRequired,
-  stations: PropTypes.array.isRequired
+  stations: PropTypes.array.isRequired,
 };
 
-export default NewChart;
+export default Matrix;
