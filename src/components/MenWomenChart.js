@@ -16,6 +16,10 @@ class MenWomenChart extends Component {
 
   componentDidMount() {
     this.createChart();
+
+    if (this.props.trips.length !== 0) {
+      this.updateChart();
+    }
   }
 
   componentDidUpdate() {

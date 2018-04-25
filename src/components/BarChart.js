@@ -17,6 +17,10 @@ class BarChart extends Component {
 
   componentDidMount() {
     this.createBarChart();
+
+    if (this.props.data.length !== 0) {
+      this.updateBarChart();
+    }
   }
 
   componentDidUpdate() {
