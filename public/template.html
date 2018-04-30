@@ -22,13 +22,13 @@
         this.duration = +obj.duration_sec;
 
         // TODO: Timezone is not correct in Safari
-        this.start_station = stations[+obj.start_station_id];
+        this.start_station = stations.find(e => e.id === +obj.start_station_id);
         this.start_time = new Date(obj.start_time.replace(' ', 'T'));
-        this.end_station = stations[+obj.end_station_id];
+        this.end_station = stations.find(e => e.id === +obj.end_station_id);
         this.end_time = new Date(obj.end_time.replace(' ', 'T'));
         this.user_type = obj.user_type;
         this.member_birth_year = +obj.member_birth_year;
-        this.member_gender = obj.member_gender;
+        this.member_gender = +obj.member_gender;
       }
     }
 
@@ -47,14 +47,16 @@
 
     async function main() {
       const station_data = await d3.csv('data/ford_gobike/stations.csv');
-      const stations = [];
+      const stations_unfiltered = [];
       station_data.forEach(s => {
-        stations[s.id] = new Station(s);
+        stations_unfiltered[s.id] = new Station(s);
       });
+      const stations = stations_unfiltered.filter(e => e !== undefined);
 
       const trip_data = await d3.csv('data/ford_gobike/mini.csv');
       const trips = trip_data.map(t => new Trip(t, stations));
 
+      console.log(stations[0], stations[1]);
       console.log(trips[0], trips[1]);
 
       svg.append('rect')
