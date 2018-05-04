@@ -12,13 +12,10 @@ class BarChart extends Component {
     this.updateBarChart = this.updateBarChart.bind(this);
   }
 
-  chart = { height: 100, width: 800 };
-  yScale = d3.scaleLinear().range([100, 0]);
-
   componentDidMount() {
     this.createBarChart();
 
-    if (this.props.data.length !== 0) {
+    if (this.props.data.every(e => e !== 0)) {
       this.updateBarChart();
     }
   }
@@ -26,6 +23,9 @@ class BarChart extends Component {
   componentDidUpdate() {
     this.updateBarChart();
   }
+
+  chart = { height: 120, width: 800, margin: 40 };
+  yScale = d3.scaleLinear().range([this.chart.height, 0]);
 
   createBarChart() {
     const { data, bands } = this.props;
@@ -36,6 +36,13 @@ class BarChart extends Component {
 
     const node = this.node;
     const svg = d3.select(node);
+    const container = svg
+      .append('g')
+      .attr('class', 'container')
+      .attr(
+        'transform',
+        `translate(${this.chart.margin}, ${this.chart.margin})`
+      );
 
     const xScale = d3
       .scaleBand()
@@ -43,7 +50,10 @@ class BarChart extends Component {
       .range([0, this.chart.width])
       .padding(0.2);
 
-    svg
+    // Y grid lines group
+    container.append('g').attr('class', 'grid');
+
+    container
       .append('g')
       .attr('class', 'axis')
       .attr('transform', `translate(0, ${this.chart.height})`)
@@ -54,19 +64,19 @@ class BarChart extends Component {
       .append('div')
       .attr('class', 'tooltip');
 
-    svg
+    container
       .selectAll('rect')
       .data(data)
       .enter()
       .append('rect');
 
-    svg
+    container
       .selectAll('rect')
       .data(data)
       .exit()
       .remove();
 
-    svg
+    container
       .selectAll('rect')
       .data(data)
       .attr('x', (d, i) => xScale(bands[i]))
@@ -97,7 +107,24 @@ class BarChart extends Component {
   }
 
   updateBarChart() {
-    this.yScale.domain([0, d3.max(this.props.data)]);
+    const container = d3.select(this.node).select('.container');
+    const tickNumber = 5;
+
+    this.yScale.domain([0, d3.max(this.props.data)]).nice();
+
+    // Y grid lines
+    container.select('.grid').call(
+      d3
+        .axisLeft(this.yScale)
+        .ticks(tickNumber)
+        .tickSize(-this.chart.width)
+        .tickFormat('')
+    );
+
+    container
+      .append('g')
+      .attr('class', 'axis')
+      .call(d3.axisLeft(this.yScale).ticks(tickNumber));
 
     d3
       .select(this.node)
@@ -110,7 +137,7 @@ class BarChart extends Component {
   }
 
   render() {
-    return <svg ref={node => (this.node = node)} width={900} height={160} />;
+    return <svg ref={node => (this.node = node)} width={880} height={200} />;
   }
 }
 

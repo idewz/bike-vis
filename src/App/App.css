@@ -29,3 +29,12 @@ svg.matrix {
 text.active {
   fill: red;
 }
+
+.grid line {
+  stroke: #EEEEEE;
+  shape-rendering: crispEdges;
+}
+
+.grid path {
+  stroke-width: 0;
+}
