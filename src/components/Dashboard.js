@@ -6,9 +6,9 @@ import { blue, green } from 'material-ui/colors';
 import Grid from 'material-ui/Grid';
 import Typography from 'material-ui/Typography';
 
-import BikeIcon from 'material-ui-icons/DirectionsBike';
-import InfoIcon from 'material-ui-icons/InfoOutline';
-import PlaceIcon from 'material-ui-icons/Place';
+import BikeIcon from '@material-ui/icons/DirectionsBike';
+import InfoIcon from '@material-ui/icons/InfoOutline';
+import PlaceIcon from '@material-ui/icons/Place';
 
 import BarChart from './BarChart';
 import DataViewer from './DataViewer';

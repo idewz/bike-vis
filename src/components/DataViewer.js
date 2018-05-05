@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import IconButton from 'material-ui/IconButton';
 import TextField from 'material-ui/TextField';
 
-import RefreshIcon from 'material-ui-icons/Refresh';
+import RefreshIcon from '@material-ui/icons/Refresh';
 
 class DataViewer extends Component {
   constructor(props) {
@@ -23,7 +23,7 @@ class DataViewer extends Component {
   handleRefreshClick = event => {
     this.setState({
       value: Math.floor(
-        Math.random() * Math.floor(this.props.trips.length + 1),
+        Math.random() * Math.floor(this.props.trips.length + 1)
       ),
     });
   };
