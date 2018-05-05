@@ -1,9 +1,12 @@
-import React, { Component, Fragment } from 'react';
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
 import IconButton from 'material-ui/IconButton';
+import Grid from 'material-ui/Grid';
 import TextField from 'material-ui/TextField';
+import Typography from 'material-ui/Typography';
 
+import InfoIcon from '@material-ui/icons/InfoOutline';
 import RefreshIcon from '@material-ui/icons/Refresh';
 
 class DataViewer extends Component {
@@ -49,26 +52,39 @@ class DataViewer extends Component {
 
   render() {
     return (
-      <Fragment>
-        <TextField
-          placeholder="Index"
-          label={`Index (0-${this.props.trips.length - 1})`}
-          value={this.state.value}
-          onChange={this.handleChange}
-        />
-        <IconButton aria-label="Refresh" variant="flat" color="primary">
-          <RefreshIcon onClick={this.handleRefreshClick} />
-        </IconButton>
-        <table>
-          <thead>
-            <tr>
-              <th>Name</th>
-              <th>Value</th>
-            </tr>
-          </thead>
-          <tbody>{this.renderRows()}</tbody>
-        </table>
-      </Fragment>
+      <Grid container spacing={24} justify="center">
+        <Grid item xs={8}>
+          <Typography variant="headline">
+            Our data &nbsp;
+            <a href="https://github.com/idewz/cs560-project/tree/master/public/data/ford_gobike">
+              <InfoIcon style={{ fontSize: '0.7em' }} />
+            </a>
+          </Typography>
+          <Typography variant="subheading">
+            sample trips data from March 2018 for development{' '}
+          </Typography>
+        </Grid>
+        <Grid item xs={8}>
+          <TextField
+            placeholder="Index"
+            label={`Index (0-${this.props.trips.length - 1})`}
+            value={this.state.value}
+            onChange={this.handleChange}
+          />
+          <IconButton aria-label="Refresh" variant="flat" color="primary">
+            <RefreshIcon onClick={this.handleRefreshClick} />
+          </IconButton>
+          <table>
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Value</th>
+              </tr>
+            </thead>
+            <tbody>{this.renderRows()}</tbody>
+          </table>
+        </Grid>
+      </Grid>
     );
   }
 }

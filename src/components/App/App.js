@@ -17,6 +17,7 @@ import Typography from 'material-ui/Typography';
 
 import Bubble from '../Bubble';
 import Dashboard from '../Dashboard';
+import DataViewer from '../DataViewer';
 import Matrix from '../Matrix';
 
 import Areas from '../../models/Areas';
@@ -151,6 +152,7 @@ class App extends Component {
                   onChange={(e, v) => this.handleTabChange(e, v, history)}
                 >
                   <Tab value="/" label="Dashboard" />
+                  <Tab value="/data" label="Data" />
                   <Tab value="/members" label="Members" />
                   <Tab value="/stations" label="Stations" />
                 </Tabs>
@@ -181,6 +183,10 @@ class App extends Component {
                     trips={this.state.trips}
                   />
                 )}
+              />
+              <Route
+                path="/data"
+                render={() => <DataViewer trips={this.state.trips} />}
               />
             </Switch>
           </main>
