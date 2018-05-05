@@ -1,11 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
-import BarChart from './components/BarChart';
-import DataViewer from './components/DataViewer';
-import MenWomenChart from './components/MenWomenChart';
-import NumberCardList from './components/NumberCardList';
-
 import { withStyles } from 'material-ui/styles';
 import { blue, green } from 'material-ui/colors';
 import Grid from 'material-ui/Grid';
@@ -15,15 +10,21 @@ import BikeIcon from 'material-ui-icons/DirectionsBike';
 import InfoIcon from 'material-ui-icons/InfoOutline';
 import PlaceIcon from 'material-ui-icons/Place';
 
+import BarChart from './components/BarChart';
+import DataViewer from './components/DataViewer';
+import MenWomenChart from './components/MenWomenChart';
+import NumberCardList from './components/NumberCardList';
+import TimeMatrix from './components/TimeMatrix';
+
 class Dashboard extends Component {
+  static getDerivedStateFromProps(nextProps, prevState) {
+    return null;
+  }
+
   constructor(props) {
     super(props);
 
     this.state = {};
-  }
-
-  static getDerivedStateFromProps(nextProps, prevState) {
-    return null;
   }
 
   ridesPerHour(trips) {
@@ -78,6 +79,13 @@ class Dashboard extends Component {
         <NumberCardList cards={cards} />
 
         <Grid container spacing={24} justify="center" className={classes.grid}>
+          <Grid item xs={8}>
+            <Typography variant="headline">Rides by Time of Day</Typography>
+          </Grid>
+          <Grid item xs={8}>
+            <TimeMatrix trips={trips} />
+          </Grid>
+
           <Grid item xs={8}>
             <Typography variant="headline">Number of Rides per Hour</Typography>
           </Grid>
