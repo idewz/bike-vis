@@ -42,8 +42,19 @@ class TimeMatrix extends Component {
     return matrix;
   }
 
+  get12HourTime(d, i) {
+    let isAM = d <= 12;
+    let hour = d || 12;
+
+    if (hour > 12) {
+      hour -= 12;
+    }
+
+    return `${hour} ${isAM ? 'am' : 'pm'}`;
+  }
+
   chart = { width: 48 * 7, height: 16 * 24, margin: 20 };
-  colors = [red[100], red[300], red[500], red[700], red[900]];
+  colors = [red[100], red[300], red[400], red[700], red[900]];
   days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
   xScale = d3
@@ -58,7 +69,13 @@ class TimeMatrix extends Component {
     .range([0, this.chart.height])
     .padding(0.2);
 
-  colorScale = d3.scaleQuantile().range(this.colors);
+  colorScale = d3.scaleQuantize().range(this.colors);
+
+  legendXScale = d3
+    .scaleBand()
+    .domain(this.colors)
+    .range([0, this.chart.width])
+    .padding(0.05);
 
   createTimeMatrix() {
     const matrix = [...Array(7)].map(e => Array(24).fill(0));
@@ -68,10 +85,7 @@ class TimeMatrix extends Component {
     const container = svg
       .append('g')
       .attr('class', 'container')
-      .attr(
-        'transform',
-        `translate(${this.chart.margin}, ${this.chart.margin})`
-      );
+      .attr('transform', `translate(${this.chart.margin}, 0)`);
 
     d3
       .select('.tooltip')
@@ -100,21 +114,74 @@ class TimeMatrix extends Component {
         `translate(${this.chart.margin + this.chart.width}, 0)`
       )
       .call(d3.axisRight(this.yScale).tickFormat(this.get12HourTime));
+
+    container
+      .append('g')
+      .attr('class', 'legend')
+      .attr('transform', `translate(0, ${this.chart.height + 32})`)
+      .append('g')
+      .attr('class', 'axis')
+      .attr('transform', `translate(0, 24)`);
+
+    container
+      .select('g.legend')
+      .selectAll('rect')
+      .data(this.colors)
+      .enter()
+      .append('rect')
+      .attr('x', (d, i) => this.legendXScale(this.colors[i]))
+      .attr('y', 0)
+      .attr('height', 10)
+      .attr('width', this.legendXScale.bandwidth())
+      .style('fill', d => d);
   }
 
   updateTimeMatrix() {
     const { trips } = this.props;
-    const matrix = this.getMatrix(trips);
-
-    this.colorScale.domain([0, d3.max(matrix, d => d3.max(d))]);
-
     const node = this.node;
     const container = d3.select(node).select('.container');
+    const matrix = this.getMatrix(trips);
+    this.colorScale.domain([0, d3.max(matrix, d => d3.max(d))]).nice();
+
+    let tickValues = [];
+    this.colors.forEach((color, i) => {
+      const extent = this.colorScale.invertExtent(color);
+
+      if (i === 0) {
+        tickValues.push(extent[0]);
+      }
+      tickValues.push(extent[1]);
+    });
 
     container
       .selectAll('g')
       .data(matrix)
       .each(this.drawDayCells);
+
+    const ticks = container
+      .select('g.legend .axis')
+      .selectAll('text')
+      .data(tickValues);
+
+    const textPosition = (d, i) => {
+      if (i === 0) {
+        return 0;
+      }
+
+      if (i === this.colors.length) {
+        return this.chart.width;
+      } else {
+        return this.legendXScale(this.colors[i]) + 4;
+      }
+    };
+
+    ticks
+      .enter()
+      .append('text')
+      .attr('x', textPosition)
+      .style('text-anchor', (d, i) => (i ? 'end' : 'start'))
+      .merge(ticks)
+      .text(d => d);
   }
 
   drawDayCells(d, i, nodes) {
@@ -163,24 +230,13 @@ class TimeMatrix extends Component {
     tooltip.style('visibility', 'hidden');
   }
 
-  get12HourTime(d, i) {
-    let isAM = d <= 12;
-    let hour = d || 12;
-
-    if (hour > 12) {
-      hour -= 12;
-    }
-
-    return `${hour} ${isAM ? 'am' : 'pm'}`;
-  }
-
   render() {
     return (
       <svg
         ref={node => (this.node = node)}
         className="time-matrix"
         width={400}
-        height={440}
+        height={480}
       />
     );
   }
