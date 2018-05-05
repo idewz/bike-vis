@@ -71,8 +71,13 @@ class DataViewer extends Component {
             value={this.state.value}
             onChange={this.handleChange}
           />
-          <IconButton aria-label="Refresh" variant="flat" color="primary">
-            <RefreshIcon onClick={this.handleRefreshClick} />
+          <IconButton
+            aria-label="Refresh"
+            variant="flat"
+            color="primary"
+            onClick={this.handleRefreshClick}
+          >
+            <RefreshIcon />
           </IconButton>
           <table>
             <thead>
