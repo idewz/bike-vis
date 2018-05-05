@@ -67,7 +67,7 @@ class Matrix extends Component {
     //   console.log(stations[orders.name[i]].name);
     // }
 
-    xScale.domain(stations.map(e => e.id));
+    xScale.domain(stations.map((e, i) => i));
 
     const tooltip = d3
       .select('body')
@@ -81,7 +81,7 @@ class Matrix extends Component {
       .append('g')
       .attr('class', 'column')
       .attr('transform', function(d) {
-        return 'translate(' + xScale(stations[d.key].id) + ') rotate(-90)';
+        return 'translate(' + xScale(parseInt(d.key, 10)) + ') rotate(-90)';
       });
 
     column.append('line').attr('x1', -width);
@@ -93,7 +93,7 @@ class Matrix extends Component {
       .attr('dy', '.32em')
       .attr('text-anchor', 'start')
       .text(function(d, i) {
-        return stations[d.key].name;
+        return stations[parseInt(d.key, 10)].name;
       })
       .style('font-size', '3px');
 
@@ -104,7 +104,7 @@ class Matrix extends Component {
       .append('g')
       .attr('class', 'row')
       .attr('transform', function(d) {
-        return 'translate(0,' + xScale(stations[d.key].id) + ')';
+        return 'translate(0,' + xScale(parseInt(d.key, 10)) + ')';
       })
       .each(get_row);
 
