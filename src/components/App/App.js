@@ -46,7 +46,7 @@ class App extends Component {
     super();
 
     this.state = {
-      area: 0,
+      areaId: 0,
       allStations: [],
       allTrips: [],
       stations: [],
@@ -77,15 +77,8 @@ class App extends Component {
     });
   }
 
-  handleTabChange(event, value, history) {
-    this.setState({ value });
-    history.push(value);
-  }
-
-  handleAreaChange(event) {
-    const area = event.target.value;
-
-    if (area === 0) {
+  filterDataByArea(areaId) {
+    if (areaId === 0) {
       this.setState({
         stations: this.state.allStations,
         trips: this.state.allTrips,
@@ -93,14 +86,25 @@ class App extends Component {
     } else {
       const trips = this.state.allTrips.filter(t => {
         return (
-          t.start_station.area.id === area || t.end_station.area.id === area
+          t.start_station.area.id === areaId || t.end_station.area.id === areaId
         );
       });
-      const stations = this.state.allStations.filter(s => s.area.id === area);
+      const stations = this.state.allStations.filter(s => s.area.id === areaId);
 
       this.setState({ stations, trips });
     }
-    this.setState({ area });
+
+    this.setState({ areaId });
+  }
+
+  handleTabChange(event, value, history) {
+    this.setState({ value });
+    history.push(value);
+  }
+
+  handleAreaChange(event) {
+    const areaId = event.target.value || (Math.random() * 3) | 0;
+    this.filterDataByArea(areaId);
   }
 
   render() {
@@ -113,14 +117,18 @@ class App extends Component {
           <AppBar position="sticky" color="primary" className={classes.appBar}>
             <Toolbar className={classes.appBar}>
               <img src={logo} className="App-logo" alt="logo" />
-              <Typography variant="title" color="inherit">
+              <Typography
+                variant="title"
+                color="inherit"
+                onClick={this.handleAreaChange}
+              >
                 Bike Sharing
               </Typography>
               <TextField
                 id="select-area"
                 select
                 className={classes.textField}
-                value={this.state.area}
+                value={this.state.areaId}
                 onChange={this.handleAreaChange}
                 SelectProps={{
                   MenuProps: {
@@ -199,6 +207,9 @@ const styles = theme => {
     },
     textField: {
       width: 160,
+    },
+    menu: {
+      width: 200,
     },
   };
 };
