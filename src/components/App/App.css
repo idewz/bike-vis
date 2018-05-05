@@ -26,12 +26,21 @@ svg.matrix {
   padding: 80px;
 }
 
+.time-matrix .axis line,
+.time-matrix .axis path {
+  stroke-width: 0;
+}
+
+.time-matrix .axis--y text {
+  text-anchor: end;
+}
+
 text.active {
   fill: red;
 }
 
 .grid line {
-  stroke: #EEEEEE;
+  stroke: #eeeeee;
   shape-rendering: crispEdges;
 }
 

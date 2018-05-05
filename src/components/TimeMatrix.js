@@ -44,6 +44,7 @@ class TimeMatrix extends Component {
 
   chart = { width: 48 * 7, height: 16 * 24, margin: 20 };
   colors = [red[100], red[300], red[500], red[700], red[900]];
+  days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
   xScale = d3
     .scaleBand()
@@ -84,6 +85,21 @@ class TimeMatrix extends Component {
       .enter()
       .append('g')
       .attr('transform', (d, i) => `translate(${this.xScale(i)}, 0)`);
+
+    container
+      .append('g')
+      .attr('class', 'axis axis--x')
+      .attr('transform', `translate(0, ${this.chart.height})`)
+      .call(d3.axisBottom(this.xScale).tickFormat((d, i) => this.days[i]));
+
+    container
+      .append('g')
+      .attr('class', 'axis axis--y')
+      .attr(
+        'transform',
+        `translate(${this.chart.margin + this.chart.width}, 0)`
+      )
+      .call(d3.axisRight(this.yScale).tickFormat(this.get12HourTime));
   }
 
   updateTimeMatrix() {
@@ -126,9 +142,10 @@ class TimeMatrix extends Component {
 
   handleMouseOver(d) {
     const tooltip = d3.select('.tooltip');
-    const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 
-    tooltip.html(`${days[d.day]} at ${d.hour}<br/>${d.value}`);
+    tooltip.html(
+      `${this.days[d.day]} ${this.get12HourTime(d.hour)}<br/>${d.value} rides`
+    );
     tooltip.style('visibility', 'visible');
   }
 
@@ -146,8 +163,26 @@ class TimeMatrix extends Component {
     tooltip.style('visibility', 'hidden');
   }
 
+  get12HourTime(d, i) {
+    let isAM = d <= 12;
+    let hour = d || 12;
+
+    if (hour > 12) {
+      hour -= 12;
+    }
+
+    return `${hour} ${isAM ? 'am' : 'pm'}`;
+  }
+
   render() {
-    return <svg ref={node => (this.node = node)} width={400} height={440} />;
+    return (
+      <svg
+        ref={node => (this.node = node)}
+        className="time-matrix"
+        width={400}
+        height={440}
+      />
+    );
   }
 }
 
