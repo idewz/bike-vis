@@ -31,11 +31,13 @@ class TimeMatrix extends Component {
   }
 
   getMatrix(trips) {
-    const random = max => {
-      return (Math.random() * max) | 0;
-    };
+    const matrix = [...Array(7)].map(e => Array(24).fill(0));
 
-    const matrix = [...Array(7)].map(e => Array(24).fill(random(100)));
+    trips.forEach(trip => {
+      const day = trip.start_time.getDay();
+      const hour = trip.start_time.getHours();
+      matrix[day][hour]++;
+    });
 
     return matrix;
   }
