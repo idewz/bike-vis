@@ -9,7 +9,9 @@ import {
   withStyles,
 } from 'material-ui/styles';
 import AppBar from 'material-ui/AppBar';
+import MenuItem from 'material-ui/Menu/MenuItem';
 import Tabs, { Tab } from 'material-ui/Tabs';
+import TextField from 'material-ui/TextField';
 import Toolbar from 'material-ui/Toolbar';
 import Typography from 'material-ui/Typography';
 
@@ -22,7 +24,7 @@ import Station from '../models/Station';
 import Trip from '../models/Trip';
 
 import './App.css';
-import logo from '../bike_white_48px.svg';
+import logo from '../bike_black_48px.svg';
 
 const theme = createMuiTheme({
   overrides: {
@@ -44,12 +46,16 @@ class App extends Component {
     super();
 
     this.state = {
+      area: 0,
+      allStations: [],
+      allTrips: [],
       stations: [],
       trips: [],
       value: '/',
     };
 
     this.handleTabChange = this.handleTabChange.bind(this);
+    this.handleAreaChange = this.handleAreaChange.bind(this);
   }
 
   async componentWillMount() {
@@ -60,10 +66,14 @@ class App extends Component {
     });
 
     const trip_data = await csv('../data/ford_gobike/mini.csv');
-    const filteredStations = stations.filter(e => e !== undefined);
+    const definedStations = stations.filter(e => e !== undefined);
+    const trips = trip_data.map(t => new Trip(t, definedStations));
+
     this.setState({
-      stations: filteredStations,
-      trips: trip_data.map(t => new Trip(t, filteredStations)),
+      allStations: definedStations,
+      allTrips: trips,
+      stations: definedStations,
+      trips,
     });
   }
 
@@ -72,18 +82,59 @@ class App extends Component {
     history.push(value);
   }
 
+  handleAreaChange(event) {
+    const area = event.target.value;
+
+    if (area === 0) {
+      this.setState({
+        stations: this.state.allStations,
+        trips: this.state.allTrips,
+      });
+    } else {
+      const trips = this.state.allTrips.filter(t => {
+        return (
+          t.start_station.area.id === area || t.end_station.area.id === area
+        );
+      });
+      const stations = this.state.allStations.filter(s => s.area.id === area);
+
+      this.setState({ stations, trips });
+    }
+    this.setState({ area });
+  }
+
   render() {
     const { classes } = this.props;
+    const areas = [{ id: 0, name: 'All' }, ...Areas];
 
     return (
       <BrowserRouter>
         <MuiThemeProvider theme={theme}>
-          <AppBar position="static" color="primary" className={classes.black}>
-            <Toolbar>
+          <AppBar position="sticky" color="primary" className={classes.appBar}>
+            <Toolbar className={classes.appBar}>
               <img src={logo} className="App-logo" alt="logo" />
               <Typography variant="title" color="inherit">
                 Bike Sharing
               </Typography>
+              <TextField
+                id="select-area"
+                select
+                className={classes.textField}
+                value={this.state.area}
+                onChange={this.handleAreaChange}
+                SelectProps={{
+                  MenuProps: {
+                    className: classes.menu,
+                  },
+                }}
+                margin="normal"
+              >
+                {areas.map(option => (
+                  <MenuItem key={option.id} value={option.id}>
+                    {option.name}
+                  </MenuItem>
+                ))}
+              </TextField>
             </Toolbar>
             <Route
               render={({ history }) => (
@@ -141,8 +192,13 @@ const styles = theme => {
     root: {
       marginTop: theme.spacing.unit * 3,
     },
-    black: {
-      backgroundColor: '#212121',
+    appBar: {
+      color: 'black',
+      backgroundColor: 'white',
+      justifyContent: 'space-between',
+    },
+    textField: {
+      width: 160,
     },
   };
 };
