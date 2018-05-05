@@ -15,16 +15,16 @@ import TextField from 'material-ui/TextField';
 import Toolbar from 'material-ui/Toolbar';
 import Typography from 'material-ui/Typography';
 
-import Bubble from '../components/Bubble';
+import Bubble from '../Bubble';
 import Dashboard from '../Dashboard';
-import Matrix from '../components/Matrix';
+import Matrix from '../Matrix';
 
-import Areas from '../models/Areas';
-import Station from '../models/Station';
-import Trip from '../models/Trip';
+import Areas from '../../models/Areas';
+import Station from '../../models/Station';
+import Trip from '../../models/Trip';
 
 import './App.css';
-import logo from '../bike_black_48px.svg';
+import logo from '../../bike_black_48px.svg';
 
 const theme = createMuiTheme({
   overrides: {

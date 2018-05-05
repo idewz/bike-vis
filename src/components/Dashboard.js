@@ -10,11 +10,11 @@ import BikeIcon from 'material-ui-icons/DirectionsBike';
 import InfoIcon from 'material-ui-icons/InfoOutline';
 import PlaceIcon from 'material-ui-icons/Place';
 
-import BarChart from './components/BarChart';
-import DataViewer from './components/DataViewer';
-import MenWomenChart from './components/MenWomenChart';
-import NumberCardList from './components/NumberCardList';
-import TimeMatrix from './components/TimeMatrix';
+import BarChart from './BarChart';
+import DataViewer from './DataViewer';
+import MenWomenChart from './MenWomenChart';
+import NumberCardList from './NumberCardList';
+import TimeMatrix from './TimeMatrix';
 
 class Dashboard extends Component {
   static getDerivedStateFromProps(nextProps, prevState) {
