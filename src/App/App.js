@@ -16,6 +16,8 @@ import Typography from 'material-ui/Typography';
 import Bubble from '../components/Bubble';
 import Dashboard from '../Dashboard';
 import Matrix from '../components/Matrix';
+
+import Areas from '../models/Areas';
 import Station from '../models/Station';
 import Trip from '../models/Trip';
 
@@ -54,7 +56,7 @@ class App extends Component {
     const station_data = await csv('../data/ford_gobike/stations.csv');
     const stations = [];
     station_data.forEach(s => {
-      stations[s.id] = new Station(s);
+      stations[s.id] = new Station(s, Areas);
     });
 
     const trip_data = await csv('../data/ford_gobike/mini.csv');
