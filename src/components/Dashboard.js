@@ -80,6 +80,13 @@ class Dashboard extends Component {
 
         <Grid container spacing={24} justify="center" className={classes.grid}>
           <Grid item xs={8}>
+            <Typography variant="headline">Men vs Women</Typography>
+          </Grid>
+          <Grid item xs={8}>
+            <MenWomenChart trips={trips} />
+          </Grid>
+
+          <Grid item xs={8}>
             <Typography variant="headline">Rides by Time of Day</Typography>
           </Grid>
           <Grid item xs={8}>
@@ -98,13 +105,6 @@ class Dashboard extends Component {
           </Grid>
           <Grid item xs={8}>
             <BarChart data={daysData} bands={daysBand} />
-          </Grid>
-
-          <Grid item xs={8}>
-            <Typography variant="headline">Men vs Women</Typography>
-          </Grid>
-          <Grid item xs={8}>
-            <MenWomenChart trips={trips} />
           </Grid>
 
           <Grid item xs={8}>

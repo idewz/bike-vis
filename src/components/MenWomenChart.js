@@ -97,13 +97,14 @@ class MenWomenChart extends Component {
       .attr('width', (d, i) => d * width)
       .attr('x', (d, i) => this.positionX(percents, i))
       .on('end', () => {
-        gText
-          .selectAll('text.big-percentage')
+        const percentTexts = gText.selectAll('text.big-percentage');
+        percentTexts
           .data(percents)
           .enter()
           .append('text')
           .attr('x', (d, i) => this.positionX(percents, i) + 16)
           .attr('class', 'big-percentage')
+          .merge(percentTexts)
           .text(d => `${(d * 100).toFixed(2)}%`);
 
         gText
