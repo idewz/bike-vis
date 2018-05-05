@@ -39,6 +39,10 @@ svg.matrix {
   font-size: 0.7em;
 }
 
+.number {
+  font-weight: bold;
+}
+
 text.active {
   fill: red;
 }

@@ -207,13 +207,17 @@ class TimeMatrix extends Component {
       .style('fill', (e, i) => this.colorScale(e.value));
   }
 
-  handleMouseOver(d) {
+  handleMouseOver(d, i, nodes) {
+    const node = d3.select(nodes[i]);
     const tooltip = d3.select('.tooltip');
 
-    tooltip.html(
-      `${this.days[d.day]} ${this.get12HourTime(d.hour)}<br/>${d.value} rides`
-    );
+    node.style('stroke', 'black');
     tooltip.style('visibility', 'visible');
+    tooltip.html(
+      `${this.days[d.day]} ${this.get12HourTime(
+        d.hour
+      )}<br/><div class="number">${d.value}</div> rides`
+    );
   }
 
   handleMouseMove(d) {
@@ -224,9 +228,11 @@ class TimeMatrix extends Component {
       .style('left', d3.event.pageX + 10 + 'px');
   }
 
-  handleMouseOut(d) {
+  handleMouseOut(d, i, nodes) {
+    const node = d3.select(nodes[i]);
     const tooltip = d3.select('.tooltip');
 
+    node.style('stroke', 'none');
     tooltip.style('visibility', 'hidden');
   }
 

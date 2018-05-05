@@ -94,7 +94,7 @@ class BarChart extends Component {
 
     function handleMouseOver(d) {
       d3.select(this).style('fill', red[800]);
-      tooltip.text(d);
+      tooltip.html(`<div class="number">${d}</div>`);
       tooltip.style('visibility', 'visible');
     }
 
