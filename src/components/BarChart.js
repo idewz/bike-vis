@@ -55,28 +55,32 @@ class BarChart extends Component {
 
     container
       .append('g')
-      .attr('class', 'axis')
+      .attr('class', 'axis axis--x')
       .attr('transform', `translate(0, ${this.chart.height})`)
       .call(d3.axisBottom(xScale).tickSize(0));
+
+    container.append('g').attr('class', 'axis axis--y');
 
     const tooltip = d3
       .select('body')
       .append('div')
       .attr('class', 'tooltip');
 
-    container
+    const gRect = container.append('g').attr('class', 'rects');
+
+    gRect
       .selectAll('rect')
       .data(data)
       .enter()
       .append('rect');
 
-    container
+    gRect
       .selectAll('rect')
       .data(data)
       .exit()
       .remove();
 
-    container
+    gRect
       .selectAll('rect')
       .data(data)
       .attr('x', (d, i) => xScale(bands[i]))
@@ -122,12 +126,12 @@ class BarChart extends Component {
     );
 
     container
-      .append('g')
-      .attr('class', 'axis')
+      .select('.axis--y')
       .call(d3.axisLeft(this.yScale).ticks(tickNumber));
 
     d3
       .select(this.node)
+      .select('g.rects')
       .selectAll('rect')
       .data(this.props.data)
       .transition()

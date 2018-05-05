@@ -61,6 +61,11 @@ class MenWomenChart extends Component {
       .attr('height', height)
       .attr('x', (d, i) => this.positionX(percents, i))
       .style('fill', (d, i) => this.colors[i]);
+
+    svg
+      .append('g')
+      .attr('class', 'texts')
+      .attr('transform', `translate(0, 60)`);
   }
 
   updateChart() {
@@ -77,12 +82,12 @@ class MenWomenChart extends Component {
     });
 
     const total = data.reduce(
-      (previousValue, currentValue) => previousValue + currentValue,
+      (previousValue, currentValue) => previousValue + currentValue
     );
     const percents = data.map(d => d / total);
 
+    const gText = svg.select('g.texts');
     const rects = svg.selectAll('rect');
-    const gText = svg.append('g').attr('transform', `translate(0, 60)`);
 
     rects
       .data(percents)
