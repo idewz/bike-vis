@@ -47,7 +47,11 @@ class App extends Component {
     super();
 
     this.state = {
-      areaId: 0,
+      filters: {
+        area: 0,
+        gender: -1,
+      },
+
       allStations: [],
       allTrips: [],
       stations: [],
@@ -78,24 +82,53 @@ class App extends Component {
     });
   }
 
-  filterDataByArea(areaId) {
-    if (areaId === 0) {
-      this.setState({
-        stations: this.state.allStations,
-        trips: this.state.allTrips,
-      });
-    } else {
-      const trips = this.state.allTrips.filter(t => {
-        return (
-          t.start_station.area.id === areaId || t.end_station.area.id === areaId
-        );
-      });
-      const stations = this.state.allStations.filter(s => s.area.id === areaId);
+  resetFilter() {
+    this.setState({
+      stations: this.state.allStations,
+      trips: this.state.allTrips,
+    });
+  }
 
-      this.setState({ stations, trips });
+  applyFilter(field, value) {
+    console.log(`apply filter ${field} = ${value}`);
+    if (field === 'area') {
+      this.filterDataByArea(value);
+    } else if (field === 'gender') {
+      this.filterDataByGender(value);
+    }
+  }
+
+  filterDataByGender(gender) {
+    if (gender === -1) {
+      this.resetFilter();
+      this.setState({ filters: { ...this.state.filters, gender } });
+      return;
     }
 
-    this.setState({ areaId });
+    let trips;
+
+    if (this.state.filters.gender === -1) {
+      trips = this.state.trips.filter(t => t.member_gender === gender);
+    } else {
+      trips = this.state.allTrips.filter(t => t.member_gender === gender);
+    }
+
+    this.setState({ filters: { ...this.state.filters, gender }, trips });
+  }
+
+  filterDataByArea(area) {
+    if (area === 0) {
+      this.resetFilter();
+      this.setState({ filters: { area } });
+      return;
+    }
+
+    const trips = this.state.allTrips.filter(
+      t => t.start_station.area.id === area || t.end_station.area.id === area
+    );
+    const stations = this.state.allStations.filter(s => s.area.id === area);
+
+    this.setState({ filters: { area }, stations, trips });
   }
 
   handleTabChange(event, value, history) {
@@ -104,8 +137,8 @@ class App extends Component {
   }
 
   handleAreaChange(event) {
-    const areaId = event.target.value || (Math.random() * 3) | 0;
-    this.filterDataByArea(areaId);
+    const areaId = event.target ? event.target.value : (Math.random() * 3) | 0;
+    this.applyFilter('area', areaId);
   }
 
   render() {
@@ -121,7 +154,9 @@ class App extends Component {
               <Typography
                 variant="title"
                 color="inherit"
-                onClick={this.handleAreaChange}
+                onClick={() =>
+                  this.applyFilter('gender', (Math.random() * 2) | 0)
+                }
               >
                 Bike Sharing
               </Typography>
@@ -129,7 +164,7 @@ class App extends Component {
                 id="select-area"
                 select
                 className={classes.textField}
-                value={this.state.areaId}
+                value={this.state.filters.area}
                 onChange={this.handleAreaChange}
                 SelectProps={{
                   MenuProps: {

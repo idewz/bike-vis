@@ -102,20 +102,22 @@ class MenWomenChart extends Component {
           .data(percents)
           .enter()
           .append('text')
-          .attr('x', (d, i) => this.positionX(percents, i) + 16)
           .attr('class', 'big-percentage')
           .merge(percentTexts)
-          .text(d => `${(d * 100).toFixed(2)}%`);
+          .attr('x', (d, i) => this.positionX(percents, i) + 16)
+          .text(d => (d > 0 ? `${(d * 100).toFixed(2)}%` : ''));
 
-        gText
-          .selectAll('text.label')
-          .data(['Men', 'Women', 'Other'])
+        const labels = ['Men', 'Women', 'Other'];
+        const genderTexts = gText.selectAll('text.label');
+        genderTexts
+          .data(percents)
           .enter()
           .append('text')
-          .attr('x', (d, i) => this.positionX(percents, i) + 16)
-          .attr('y', -24)
           .attr('class', 'label')
-          .text(d => d);
+          .attr('y', -24)
+          .merge(genderTexts)
+          .attr('x', (d, i) => this.positionX(percents, i) + 16)
+          .text((d, i) => (d > 0 ? labels[i] : ''));
       });
   }
 
