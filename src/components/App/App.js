@@ -18,7 +18,6 @@ import Typography from 'material-ui/Typography';
 import Bubble from '../Bubble';
 import Dashboard from '../Dashboard';
 import DataViewer from '../DataViewer';
-import Matrix from '../Matrix';
 
 import Areas from '../../models/Areas';
 import Station from '../../models/Station';
@@ -26,6 +25,7 @@ import Trip from '../../models/Trip';
 
 import './App.css';
 import logo from '../../bike_black_48px.svg';
+import MapContainer from '../MapContainer';
 
 const theme = createMuiTheme({
   overrides: {
@@ -278,7 +278,7 @@ class App extends Component {
               <Route
                 path="/stations"
                 render={() => (
-                  <Matrix
+                  <MapContainer
                     stations={this.state.stations}
                     trips={this.state.trips}
                   />
