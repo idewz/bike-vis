@@ -25,7 +25,7 @@ class MemberChart extends Component {
     const labels = ['Subscriber', 'Customer'];
 
     return (
-      <NestedMap data={data} labels={labels} colors={colors} unit="rides" />
+      <NestedMap data={data} labels={labels} colors={colors} unit="trips" />
     );
   }
 }

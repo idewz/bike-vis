@@ -113,7 +113,7 @@ class Dashboard extends Component {
             <Grid container>
               <Grid item xs={6}>
                 <Typography variant="headline">Rides by Time of Day</Typography>
-                <TimeMatrix matrix={rideMatrix} unit="rides" />
+                <TimeMatrix matrix={rideMatrix} unit="trips" />
               </Grid>
             </Grid>
           </Grid>

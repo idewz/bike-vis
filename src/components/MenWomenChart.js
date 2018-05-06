@@ -29,7 +29,7 @@ class MenWomenChart extends Component {
     const labels = ['Men', 'Women', 'Others'];
 
     return (
-      <NestedMap data={data} labels={labels} colors={colors} unit="rides" />
+      <NestedMap data={data} labels={labels} colors={colors} unit="trips" />
     );
   }
 }
