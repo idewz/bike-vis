@@ -2,18 +2,20 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
 import { withStyles } from 'material-ui/styles';
-import { blue, green } from 'material-ui/colors';
+import { blue, green, orange } from 'material-ui/colors';
 import Grid from 'material-ui/Grid';
 import Typography from 'material-ui/Typography';
 
 import BikeIcon from '@material-ui/icons/DirectionsBike';
 import PlaceIcon from '@material-ui/icons/Place';
+import TimerIcon from '@material-ui/icons/Timer';
 
 import BarChart from './BarChart';
+import MemberChart from './MemberChart';
 import MenWomenChart from './MenWomenChart';
 import NumberCardList from './NumberCardList';
 import TimeMatrix from './TimeMatrix';
-import MemberChart from './MemberChart';
+import { niceNumber } from '../utils';
 
 class Dashboard extends Component {
   static getDerivedStateFromProps(nextProps, prevState) {
@@ -40,6 +42,26 @@ class Dashboard extends Component {
     });
 
     return matrix;
+  }
+
+  averageDuration() {
+    const { trips } = this.props;
+
+    if (trips === undefined || trips.length === 0) {
+      return 0;
+    }
+
+    // let total = 0;
+
+    // trips.forEach(trip => {
+    //   total += trip.duration;
+    // });
+    const total = trips.reduce(
+      (previousValue, currentValue) => previousValue + currentValue.duration,
+      0
+    );
+
+    return total / 60 / trips.length;
   }
 
   ridesPerHour(trips) {
@@ -81,6 +103,12 @@ class Dashboard extends Component {
         icon: PlaceIcon,
         color: green[500],
       },
+      {
+        title: 'Avg Duration (min)',
+        value: niceNumber(this.averageDuration(), 1),
+        icon: TimerIcon,
+        color: orange[800],
+      },
     ];
 
     const hoursData = this.ridesPerHour(trips);
@@ -97,13 +125,13 @@ class Dashboard extends Component {
 
         <Grid container spacing={24} justify="center" className={classes.grid}>
           <Grid item xs={8}>
-            <Typography variant="headline">Men vs Women</Typography>
+            <Typography variant="headline">Gender</Typography>
           </Grid>
           <Grid item xs={8}>
             <MenWomenChart trips={trips} />
           </Grid>
           <Grid item xs={8}>
-            <Typography variant="headline">Subscriber vs Customer</Typography>
+            <Typography variant="headline">User Type</Typography>
           </Grid>
           <Grid item xs={8}>
             <MemberChart trips={trips} />

@@ -1,7 +1,7 @@
 const utils = {
-  toNiceNumber: number => {
+  toNiceNumber: (number, precision = 2) => {
     return number.toLocaleString(undefined, {
-      maximumFractionDigits: 2,
+      maximumFractionDigits: precision,
     });
   },
 };

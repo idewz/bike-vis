@@ -11,7 +11,7 @@ function NumberCardList(props) {
     const classes = props.classes;
 
     return (
-      <Grid item key={card.title} xs={8} md={4}>
+      <Grid item key={card.title} xs={8} md={3}>
         <NumberCard {...card}>
           <card.icon className={classes.icon} style={{ fill: card.color }} />
         </NumberCard>
