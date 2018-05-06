@@ -203,7 +203,7 @@ class TimeMatrix extends Component {
     tooltip.html(
       `${this.days[d.day]} ${this.get12HourTime(
         d.hour
-      )}<br/><div class="number">${d.value}</div> rides`
+      )}<br/><div class="number">${d.value}</div> ${this.props.unit}`
     );
   }
 
@@ -237,6 +237,7 @@ class TimeMatrix extends Component {
 
 TimeMatrix.propTypes = {
   matrix: PropTypes.array.isRequired,
+  unit: PropTypes.string.isRequired,
 };
 
 export default TimeMatrix;
