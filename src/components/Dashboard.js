@@ -25,6 +25,22 @@ class Dashboard extends Component {
     this.state = {};
   }
 
+  getRideMatrix(trips) {
+    if (trips.length === 0) {
+      return [];
+    }
+
+    const matrix = [...Array(7)].map(e => Array(24).fill(0));
+
+    trips.forEach(trip => {
+      const day = trip.start_time.getDay();
+      const hour = trip.start_time.getHours();
+      matrix[day][hour]++;
+    });
+
+    return matrix;
+  }
+
   ridesPerHour(trips) {
     const bars = new Array(24).fill(0);
 
@@ -72,6 +88,8 @@ class Dashboard extends Component {
     const daysData = this.ridesPerDay(trips);
     const daysBand = ['S', 'M', 'Tu', 'W', 'Th', 'F', 'Sa'];
 
+    const rideMatrix = this.getRideMatrix(this.props.trips);
+
     return (
       <Grid container>
         <NumberCardList cards={cards} />
@@ -85,10 +103,18 @@ class Dashboard extends Component {
           </Grid>
 
           <Grid item xs={8}>
-            <Typography variant="headline">Rides by Time of Day</Typography>
-          </Grid>
-          <Grid item xs={8}>
-            <TimeMatrix trips={trips} />
+            <Grid container>
+              <Grid item xs={6}>
+                <Typography variant="headline">Rides by Time of Day</Typography>
+                <TimeMatrix matrix={rideMatrix} />
+              </Grid>
+              <Grid item xs={6}>
+                <Typography variant="headline">
+                  Duration by Time of Day
+                </Typography>
+                <TimeMatrix matrix={rideMatrix} />
+              </Grid>
+            </Grid>
           </Grid>
 
           <Grid item xs={8}>

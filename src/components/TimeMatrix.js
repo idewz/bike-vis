@@ -21,7 +21,7 @@ class TimeMatrix extends Component {
   componentDidMount() {
     this.createTimeMatrix();
 
-    if (this.props.trips && this.props.trips.length !== 0) {
+    if (this.props.matrix && this.props.matrix.length !== 0) {
       this.updateTimeMatrix();
     }
   }
@@ -30,20 +30,8 @@ class TimeMatrix extends Component {
     this.updateTimeMatrix();
   }
 
-  getMatrix(trips) {
-    const matrix = [...Array(7)].map(e => Array(24).fill(0));
-
-    trips.forEach(trip => {
-      const day = trip.start_time.getDay();
-      const hour = trip.start_time.getHours();
-      matrix[day][hour]++;
-    });
-
-    return matrix;
-  }
-
   get12HourTime(d, i) {
-    let isAM = d <= 12;
+    let isAM = d < 12;
     let hour = d || 12;
 
     if (hour > 12) {
@@ -85,7 +73,7 @@ class TimeMatrix extends Component {
     const container = svg
       .append('g')
       .attr('class', 'container')
-      .attr('transform', `translate(${this.chart.margin}, 0)`);
+      .attr('transform', `translate(0, ${this.chart.margin / 2})`);
 
     d3
       .select('.tooltip')
@@ -137,10 +125,9 @@ class TimeMatrix extends Component {
   }
 
   updateTimeMatrix() {
-    const { trips } = this.props;
     const node = this.node;
     const container = d3.select(node).select('.container');
-    const matrix = this.getMatrix(trips);
+    const matrix = this.props.matrix;
     this.colorScale.domain([0, d3.max(matrix, d => d3.max(d))]).nice();
 
     let tickValues = [];
@@ -249,7 +236,7 @@ class TimeMatrix extends Component {
 }
 
 TimeMatrix.propTypes = {
-  trips: PropTypes.array.isRequired,
+  matrix: PropTypes.array.isRequired,
 };
 
 export default TimeMatrix;
