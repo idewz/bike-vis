@@ -79,6 +79,7 @@ class App extends Component {
     this.setState({
       allStations: definedStations,
       allTrips: trips,
+      areaTrips: trips,
       stations: definedStations,
       trips,
     });
@@ -94,33 +95,35 @@ class App extends Component {
   applyFilter(field, value) {
     console.log(`apply filter ${field} = ${value}`);
     if (field === 'area') {
-      this.filterDataByArea(value);
+      this.filterByArea(value);
     } else if (field === 'gender') {
-      this.filterDataByGender(value);
+      this.filterByGender(value);
     } else if (field === 'date') {
-      this.filterDataByDateRange(value);
+      this.filterByDateRange(value);
     }
   }
 
-  filterDataByGender(gender) {
+  filterByGender(gender) {
     if (gender === -1) {
       this.resetFilter();
       this.setState({ filters: { ...this.state.filters, gender } });
       return;
     }
 
-    let trips;
+    const trips =
+      this.state.filters.area === -1
+        ? this.state.allTrips
+        : this.state.areaTrips;
 
-    if (this.state.filters.gender === -1) {
-      trips = this.state.trips.filter(t => t.member_gender === gender);
-    } else {
-      trips = this.state.allTrips.filter(t => t.member_gender === gender);
-    }
+    const filteredTrips = trips.filter(t => t.member_gender === gender);
 
-    this.setState({ filters: { ...this.state.filters, gender }, trips });
+    this.setState({
+      filters: { ...this.state.filters, gender },
+      trips: filteredTrips,
+    });
   }
 
-  filterDataByArea(area) {
+  filterByArea(area) {
     if (area === 0) {
       this.resetFilter();
       this.setState({ filters: { ...this.state.filters, area } });
@@ -135,11 +138,12 @@ class App extends Component {
     this.setState({
       filters: { ...this.state.filters, area },
       stations,
+      areaTrips: trips,
       trips,
     });
   }
 
-  filterDataByDateRange([start, end]) {
+  filterByDateRange([start, end]) {
     const months = [
       'Jan',
       'Feb',
@@ -167,13 +171,18 @@ class App extends Component {
       return;
     }
 
-    const trips = this.state.allTrips.filter(
+    const trips =
+      this.state.filters.area === -1
+        ? this.state.allTrips
+        : this.state.areaTrips;
+
+    const filteredTrips = trips.filter(
       t => t.start_time.getMonth() >= start && t.start_time.getMonth() < end
     );
 
     this.setState({
       filters: { ...this.state.filters, month: [start, endMonth] },
-      trips,
+      trips: filteredTrips,
     });
   }
 
