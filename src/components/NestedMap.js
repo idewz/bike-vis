@@ -21,6 +21,18 @@ class NestedMap extends Component {
     }
   }
 
+  shouldComponentUpdate(nextProps, nextState) {
+    if (
+      nextProps.data === undefined ||
+      nextProps.data.length === 0 ||
+      (nextProps.data[0] === 0 || nextProps.data[1] === 0)
+    ) {
+      return false;
+    }
+
+    return true;
+  }
+
   componentDidUpdate() {
     this.updateChart();
   }
