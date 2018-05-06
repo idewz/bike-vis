@@ -4,6 +4,7 @@ import range from 'lodash.range';
 
 import * as d3 from 'd3';
 import { red } from 'material-ui/colors';
+import { niceNumber } from '../utils';
 
 class TimeMatrix extends Component {
   constructor(props) {
@@ -203,7 +204,9 @@ class TimeMatrix extends Component {
     tooltip.html(
       `${this.days[d.day]} ${this.get12HourTime(
         d.hour
-      )}<br/><div class="number">${d.value}</div> ${this.props.unit}`
+      )}<br/><div class="number">${niceNumber(d.value)}</div> ${
+        this.props.unit
+      }`
     );
   }
 
