@@ -149,11 +149,13 @@ class Dashboard extends Component {
           <Grid item xs={8} className={classes.slider}>
             <Range
               defaultValue={[0, 12]}
+              value={this.props.sliderValue}
               min={0}
               max={12}
               marks={marks}
               pushable
-              onAfterChange={this.props.handleSliderChange}
+              onChange={this.props.handleSliderChange}
+              onAfterChange={this.props.handleSliderAfterChange}
             />
           </Grid>
 
@@ -205,7 +207,9 @@ Dashboard.propTypes = {
   theme: PropTypes.object.isRequired,
   stations: PropTypes.array.isRequired,
   trips: PropTypes.array.isRequired,
+  sliderValue: PropTypes.array.isRequired,
   handleSliderChange: PropTypes.func.isRequired,
+  handleSliderAfterChange: PropTypes.func.isRequired,
 };
 
 const styles = theme => {

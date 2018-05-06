@@ -47,11 +47,9 @@ class App extends Component {
     super();
 
     this.state = {
-      filters: {
-        area: 0,
-        gender: -1,
-        month: [0, 11],
-      },
+      filterArea: 0,
+      filterGender: -1,
+      filterMonth: [0, 12],
 
       allStations: [],
       allTrips: [],
@@ -63,6 +61,7 @@ class App extends Component {
     this.handleTabChange = this.handleTabChange.bind(this);
     this.handleAreaChange = this.handleAreaChange.bind(this);
     this.handleSliderChange = this.handleSliderChange.bind(this);
+    this.handleSliderAfterChange = this.handleSliderAfterChange.bind(this);
   }
 
   async componentWillMount() {
@@ -92,41 +91,27 @@ class App extends Component {
     });
   }
 
+  resetMonthFilter() {
+    this.setState({ filterMonth: [0, 12] });
+  }
+
   applyFilter(field, value) {
     console.log(`apply filter ${field} = ${value}`);
     if (field === 'area') {
       this.filterByArea(value);
     } else if (field === 'gender') {
       this.filterByGender(value);
-    } else if (field === 'date') {
-      this.filterByDateRange(value);
+    } else if (field === 'month') {
+      this.filterByMonthRange(value);
     }
-  }
-
-  filterByGender(gender) {
-    if (gender === -1) {
-      this.resetFilter();
-      this.setState({ filters: { ...this.state.filters, gender } });
-      return;
-    }
-
-    const trips =
-      this.state.filters.area === -1
-        ? this.state.allTrips
-        : this.state.areaTrips;
-
-    const filteredTrips = trips.filter(t => t.member_gender === gender);
-
-    this.setState({
-      filters: { ...this.state.filters, gender },
-      trips: filteredTrips,
-    });
   }
 
   filterByArea(area) {
+    this.resetMonthFilter();
+
     if (area === 0) {
       this.resetFilter();
-      this.setState({ filters: { ...this.state.filters, area } });
+      this.setState({ filterArea: area });
       return;
     }
 
@@ -136,14 +121,32 @@ class App extends Component {
     const stations = this.state.allStations.filter(s => s.area.id === area);
 
     this.setState({
-      filters: { ...this.state.filters, area },
+      filterArea: area,
       stations,
       areaTrips: trips,
       trips,
     });
   }
 
-  filterByDateRange([start, end]) {
+  filterByGender(gender) {
+    if (gender === -1) {
+      this.resetFilter();
+      this.setState({ filterGender: gender });
+      return;
+    }
+
+    const trips =
+      this.state.filterArea === -1 ? this.state.allTrips : this.state.areaTrips;
+
+    const filteredTrips = trips.filter(t => t.member_gender === gender);
+
+    this.setState({
+      filterGender: gender,
+      trips: filteredTrips,
+    });
+  }
+
+  filterByMonthRange([start, end]) {
     const months = [
       'Jan',
       'Feb',
@@ -164,30 +167,30 @@ class App extends Component {
     console.log(`filtering data from ${months[start]} to ${months[endMonth]}`);
 
     if (start === 0 && end === 0) {
+      this.resetMonthFilter();
       this.resetFilter();
-      this.setState({
-        filters: { ...this.state.filters, month: [start, endMonth] },
-      });
       return;
     }
 
     const trips =
-      this.state.filters.area === -1
-        ? this.state.allTrips
-        : this.state.areaTrips;
+      this.state.filterArea === -1 ? this.state.allTrips : this.state.areaTrips;
 
     const filteredTrips = trips.filter(
       t => t.start_time.getMonth() >= start && t.start_time.getMonth() < end
     );
 
     this.setState({
-      filters: { ...this.state.filters, month: [start, endMonth] },
+      filterMonth: [start, end],
       trips: filteredTrips,
     });
   }
 
   handleSliderChange(e) {
-    this.applyFilter('date', e);
+    this.setState({ filterMonth: e });
+  }
+
+  handleSliderAfterChange(e) {
+    this.applyFilter('month', e);
   }
 
   handleTabChange(event, value, history) {
@@ -223,7 +226,7 @@ class App extends Component {
                 id="select-area"
                 select
                 className={classes.textField}
-                value={this.state.filters.area}
+                value={this.state.filterArea}
                 onChange={this.handleAreaChange}
                 SelectProps={{
                   MenuProps: {
@@ -263,6 +266,8 @@ class App extends Component {
                     stations={this.state.stations}
                     trips={this.state.trips}
                     handleSliderChange={this.handleSliderChange}
+                    handleSliderAfterChange={this.handleSliderAfterChange}
+                    sliderValue={this.state.filterMonth}
                   />
                 )}
               />
