@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 
 import * as d3 from 'd3';
 import { red } from 'material-ui/colors';
+import { niceNumber } from '../utils';
 
 class BarChart extends Component {
   constructor(props) {
@@ -94,7 +95,7 @@ class BarChart extends Component {
 
     function handleMouseOver(d) {
       d3.select(this).style('fill', red[800]);
-      tooltip.html(`<div class="number">${d}</div>`);
+      tooltip.html(`<div class="number">${niceNumber(d)}</div>`);
       tooltip.style('visibility', 'visible');
     }
 

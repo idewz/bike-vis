@@ -43,6 +43,16 @@ svg.matrix {
   font-weight: bold;
 }
 
+.texts {
+  pointer-events: none;
+}
+
+.border-dotted {
+  stroke-width: 2px;
+  stroke: white;
+  stroke-dasharray: 5;
+}
+
 text.active {
   fill: red;
 }

@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
 import * as d3 from 'd3';
+import { niceNumber } from '../utils';
 
 class NestedMap extends Component {
   constructor(props) {
@@ -9,6 +10,7 @@ class NestedMap extends Component {
 
     this.createChart = this.createChart.bind(this);
     this.updateChart = this.updateChart.bind(this);
+    this.handleMouseOver = this.handleMouseOver.bind(this);
   }
 
   componentDidMount() {
@@ -63,50 +65,95 @@ class NestedMap extends Component {
       .append('g')
       .attr('class', 'texts')
       .attr('transform', `translate(0, 60)`);
+
+    d3
+      .select('.tooltip')
+      .enter()
+      .append('div')
+      .attr('class', 'tooltip');
   }
 
   updateChart() {
+    const { data, labels } = this.props;
     const svg = d3.select(this.node);
     const width = svg.attr('width');
-    const { data, labels } = this.props;
 
     const total = data.reduce(
       (previousValue, currentValue) => previousValue + currentValue
     );
     const percents = data.map(d => d / total);
+    const blocks = data.map((d, i) => ({
+      value: d,
+      percent: d / total,
+      label: d > 0 ? labels[i] : '',
+    }));
 
     const gText = svg.select('g.texts');
     const rects = svg.selectAll('rect');
 
     rects
-      .data(percents)
+      .data(blocks)
       .transition()
       .duration(750)
       .ease(d3.easeCubicIn)
-      .attr('width', (d, i) => d * width)
+      .attr('width', (d, i) => d.percent * width)
       .attr('x', (d, i) => this.positionX(percents, i))
       .on('end', () => {
         const percentTexts = gText.selectAll('text.big-percentage');
         percentTexts
-          .data(percents)
+          .data(blocks)
           .enter()
           .append('text')
           .attr('class', 'big-percentage')
           .merge(percentTexts)
           .attr('x', (d, i) => this.positionX(percents, i) + 16)
-          .text(d => (d > 0 ? `${(d * 100).toFixed(2)}%` : ''));
+          .text(d => (d.percent > 0 ? `${niceNumber(d.percent * 100)}%` : ''));
 
         const genderTexts = gText.selectAll('text.label');
         genderTexts
-          .data(percents)
+          .data(blocks)
           .enter()
           .append('text')
           .attr('class', 'label')
           .attr('y', -24)
           .merge(genderTexts)
           .attr('x', (d, i) => this.positionX(percents, i) + 16)
-          .text((d, i) => (d > 0 ? labels[i] : ''));
+          .text(d => d.label);
       });
+
+    rects
+      .on('mouseover', this.handleMouseOver)
+      .on('mouseout', this.handleMouseOut)
+      .on('mousemove', this.handleMouseMove);
+  }
+
+  handleMouseOver(d, i, nodes) {
+    const node = d3.select(nodes[i]);
+    const tooltip = d3.select('.tooltip');
+
+    node.classed('border-dotted', true);
+    tooltip.style('visibility', 'visible');
+    tooltip.html(
+      `${d.label} <br/>
+      <div class="number">${niceNumber(d.value)}</div>
+      ${this.props.unit}`
+    );
+  }
+
+  handleMouseMove(d) {
+    const tooltip = d3.select('.tooltip');
+
+    tooltip
+      .style('top', d3.event.pageY - 40 + 'px')
+      .style('left', d3.event.pageX + 10 + 'px');
+  }
+
+  handleMouseOut(d, i, nodes) {
+    const node = d3.select(nodes[i]);
+    const tooltip = d3.select('.tooltip');
+
+    node.classed('border-dotted', false);
+    tooltip.style('visibility', 'hidden');
   }
 
   render() {
@@ -118,6 +165,7 @@ NestedMap.propTypes = {
   data: PropTypes.array.isRequired,
   labels: PropTypes.array.isRequired,
   colors: PropTypes.array.isRequired,
+  unit: PropTypes.string.isRequired,
 };
 
 export default NestedMap;

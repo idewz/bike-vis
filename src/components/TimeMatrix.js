@@ -198,7 +198,7 @@ class TimeMatrix extends Component {
     const node = d3.select(nodes[i]);
     const tooltip = d3.select('.tooltip');
 
-    node.style('stroke', 'black');
+    node.classed('border-dotted', true);
     tooltip.style('visibility', 'visible');
     tooltip.html(
       `${this.days[d.day]} ${this.get12HourTime(
@@ -219,7 +219,7 @@ class TimeMatrix extends Component {
     const node = d3.select(nodes[i]);
     const tooltip = d3.select('.tooltip');
 
-    node.style('stroke', 'none');
+    node.classed('border-dotted', false);
     tooltip.style('visibility', 'hidden');
   }
 
