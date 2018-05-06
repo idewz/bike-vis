@@ -61,7 +61,7 @@ class DataViewer extends Component {
             </a>
           </Typography>
           <Typography variant="subheading">
-            sample trips data from March 2018 for development{' '}
+            anonymized history trips data from Ford GoBike{' '}
           </Typography>
         </Grid>
         <Grid item xs={8}>
