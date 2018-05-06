@@ -13,6 +13,7 @@ import BarChart from './BarChart';
 import MenWomenChart from './MenWomenChart';
 import NumberCardList from './NumberCardList';
 import TimeMatrix from './TimeMatrix';
+import MemberChart from './MemberChart';
 
 class Dashboard extends Component {
   static getDerivedStateFromProps(nextProps, prevState) {
@@ -100,6 +101,12 @@ class Dashboard extends Component {
           </Grid>
           <Grid item xs={8}>
             <MenWomenChart trips={trips} />
+          </Grid>
+          <Grid item xs={8}>
+            <Typography variant="headline">Subscriber vs Customer</Typography>
+          </Grid>
+          <Grid item xs={8}>
+            <MemberChart trips={trips} />
           </Grid>
 
           <Grid item xs={8}>
