@@ -1,6 +1,9 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
+import { Range } from 'rc-slider';
+import 'rc-slider/assets/index.css';
+
 import { withStyles } from 'material-ui/styles';
 import { blue, green, orange } from 'material-ui/colors';
 import Grid from 'material-ui/Grid';
@@ -118,14 +121,44 @@ class Dashboard extends Component {
     const daysBand = ['S', 'M', 'Tu', 'W', 'Th', 'F', 'Sa'];
 
     const rideMatrix = this.getRideMatrix(this.props.trips);
+    const months = [
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec',
+    ];
+    const marks = Object.assign(
+      {},
+      new Array(13)
+        .fill(0)
+        .map((e, i) => (i >= 12 ? months[i - 12] : months[i]))
+    );
 
     // TODO: Make it smaller
-    // TODO: Add Time slider
     return (
       <Grid container>
-        <NumberCardList cards={cards} />
-
         <Grid container spacing={24} justify="center" className={classes.grid}>
+          <Grid item xs={8} className={classes.slider}>
+            <Range
+              defaultValue={[0, 12]}
+              min={0}
+              max={12}
+              marks={marks}
+              pushable
+              onAfterChange={this.props.handleSliderChange}
+            />
+          </Grid>
+
+          <NumberCardList cards={cards} />
+
           <Grid item xs={8}>
             <Typography variant="headline">Gender</Typography>
           </Grid>
@@ -172,12 +205,16 @@ Dashboard.propTypes = {
   theme: PropTypes.object.isRequired,
   stations: PropTypes.array.isRequired,
   trips: PropTypes.array.isRequired,
+  handleSliderChange: PropTypes.func.isRequired,
 };
 
 const styles = theme => {
   return {
     grid: {
       marginTop: theme.spacing.unit * 3,
+    },
+    slider: {
+      marginBottom: theme.spacing.unit * 3,
     },
   };
 };

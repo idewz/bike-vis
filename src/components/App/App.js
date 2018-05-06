@@ -50,6 +50,7 @@ class App extends Component {
       filters: {
         area: 0,
         gender: -1,
+        month: [0, 11],
       },
 
       allStations: [],
@@ -61,6 +62,7 @@ class App extends Component {
 
     this.handleTabChange = this.handleTabChange.bind(this);
     this.handleAreaChange = this.handleAreaChange.bind(this);
+    this.handleSliderChange = this.handleSliderChange.bind(this);
   }
 
   async componentWillMount() {
@@ -95,6 +97,8 @@ class App extends Component {
       this.filterDataByArea(value);
     } else if (field === 'gender') {
       this.filterDataByGender(value);
+    } else if (field === 'date') {
+      this.filterDataByDateRange(value);
     }
   }
 
@@ -133,6 +137,48 @@ class App extends Component {
       stations,
       trips,
     });
+  }
+
+  filterDataByDateRange([start, end]) {
+    const months = [
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec',
+    ];
+
+    const isNextYear = end >= 12;
+    const endMonth = isNextYear ? end - 12 : end;
+    console.log(`filtering data from ${months[start]} to ${months[endMonth]}`);
+
+    if (start === 0 && end === 0) {
+      this.resetFilter();
+      this.setState({
+        filters: { ...this.state.filters, month: [start, endMonth] },
+      });
+      return;
+    }
+
+    const trips = this.state.allTrips.filter(
+      t => t.start_time.getMonth() >= start && t.start_time.getMonth() < end
+    );
+
+    this.setState({
+      filters: { ...this.state.filters, month: [start, endMonth] },
+      trips,
+    });
+  }
+
+  handleSliderChange(e) {
+    this.applyFilter('date', e);
   }
 
   handleTabChange(event, value, history) {
@@ -207,6 +253,7 @@ class App extends Component {
                   <Dashboard
                     stations={this.state.stations}
                     trips={this.state.trips}
+                    handleSliderChange={this.handleSliderChange}
                   />
                 )}
               />
