@@ -41,6 +41,7 @@ svg.matrix {
 
 .number {
   font-weight: bold;
+  display: inline;
 }
 
 .texts {
