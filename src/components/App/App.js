@@ -70,7 +70,7 @@ class App extends Component {
       stations[s.id] = new Station(s, Areas);
     });
 
-    const trip_data = await csv('../data/ford_gobike/mini.csv');
+    const trip_data = await csv('../data/ford_gobike/2017.csv');
     const definedStations = stations.filter(e => e !== undefined);
     const trips = trip_data.map(t => new Trip(t, definedStations));
 
@@ -99,8 +99,6 @@ class App extends Component {
   }
 
   filterDataByGender(gender) {
-    this.applyFilter('area', this.state.filters.area);
-
     if (gender === -1) {
       this.resetFilter();
       this.setState({ filters: { ...this.state.filters, gender } });

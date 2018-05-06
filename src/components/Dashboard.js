@@ -119,6 +119,8 @@ class Dashboard extends Component {
 
     const rideMatrix = this.getRideMatrix(this.props.trips);
 
+    // TODO: Make it smaller
+    // TODO: Add Time slider
     return (
       <Grid container>
         <NumberCardList cards={cards} />
