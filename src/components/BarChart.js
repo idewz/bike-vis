@@ -25,7 +25,7 @@ class BarChart extends Component {
     this.updateBarChart();
   }
 
-  chart = { height: 120, width: 800, margin: 40 };
+  chart = { height: 120, width: 880, margin: 40 };
   yScale = d3.scaleLinear().range([this.chart.height, 0]);
 
   createBarChart() {
@@ -142,7 +142,7 @@ class BarChart extends Component {
   }
 
   render() {
-    return <svg ref={node => (this.node = node)} width={880} height={200} />;
+    return <svg ref={node => (this.node = node)} width={960} height={200} />;
   }
 }
 
