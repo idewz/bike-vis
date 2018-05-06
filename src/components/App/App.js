@@ -99,6 +99,8 @@ class App extends Component {
   }
 
   filterDataByGender(gender) {
+    this.applyFilter('area', this.state.filters.area);
+
     if (gender === -1) {
       this.resetFilter();
       this.setState({ filters: { ...this.state.filters, gender } });
@@ -119,7 +121,7 @@ class App extends Component {
   filterDataByArea(area) {
     if (area === 0) {
       this.resetFilter();
-      this.setState({ filters: { area } });
+      this.setState({ filters: { ...this.state.filters, area } });
       return;
     }
 
@@ -128,7 +130,11 @@ class App extends Component {
     );
     const stations = this.state.allStations.filter(s => s.area.id === area);
 
-    this.setState({ filters: { area }, stations, trips });
+    this.setState({
+      filters: { ...this.state.filters, area },
+      stations,
+      trips,
+    });
   }
 
   handleTabChange(event, value, history) {
