@@ -18,11 +18,13 @@ class MapContainer extends Component {
 
     this.state = {
       selectedId: 0,
+      topStations: [],
     };
 
     this.handleStationChange = this.handleStationChange.bind(this);
     this.handleSelectChange = this.handleSelectChange.bind(this);
     this.handleZoomChange = this.handleZoomChange.bind(this);
+    this.findTopStations = this.findTopStations.bind(this);
   }
 
   handleStationChange(selectedId, updateCenter = false) {
@@ -36,8 +38,9 @@ class MapContainer extends Component {
 
       this.setState({ center, zoom });
     }
+    const topStations = this.findTopStations(selectedId);
 
-    this.setState({ selectedId });
+    this.setState({ selectedId, topStations });
   }
 
   handleSelectChange(e) {
@@ -48,14 +51,32 @@ class MapContainer extends Component {
     this.setState({ zoom });
   }
 
-  renderDestination(id, count) {
+  findTopStations(selectedId) {
+    const destTrips = this.props.trips.filter(
+      t => t.start_station.id === selectedId
+    );
+
+    let destCounts = countBy(destTrips, t => t.end_station.id);
+    let result = Object.keys(destCounts).map(function(key) {
+      return { id: Number(key), trips: destCounts[key] };
+    });
+
+    return result
+      .sort((a, b) => a.trips - b.trips)
+      .reverse()
+      .slice(0, 10);
+  }
+
+  renderDestination(id, index, count) {
     const { stations } = this.props;
     const station = stations.find(s => s.id === id);
 
     return (
       <Grid container key={station.id} justify="space-between">
         <Grid>
-          <Typography variant="body1">{station.name}</Typography>
+          <Typography variant="body1">
+            {index + 1}. {station.name}
+          </Typography>
         </Grid>
         <Grid item>
           <Typography variant="body1">{niceNumber(count)} trips</Typography>
@@ -65,30 +86,18 @@ class MapContainer extends Component {
   }
 
   renderDestinationList() {
-    const destTrips = this.props.trips.filter(
-      t => t.start_station.id === this.state.selectedId
-    );
-
-    let destCounts = countBy(destTrips, t => t.end_station.id);
-    let result = Object.keys(destCounts).map(function(key) {
-      return { id: Number(key), trips: destCounts[key] };
-    });
-
-    const top5 = result
-      .sort((a, b) => a.trips - b.trips)
-      .reverse()
-      .slice(0, 5);
-
     return (
-      top5 && (
+      this.state.topStations && (
         <div>
           <Typography
             variant="body2"
             className={this.props.classes.destination}
           >
-            Top 5 Destinations
+            Top 10 Destinations
           </Typography>
-          {top5.map(s => this.renderDestination(s.id, s.trips))}
+          {this.state.topStations.map((s, i) =>
+            this.renderDestination(s.id, i, s.trips)
+          )}
         </div>
       )
     );
@@ -110,6 +119,7 @@ class MapContainer extends Component {
             selectedId={this.state.selectedId}
             handleStationChange={this.handleStationChange}
             handleZoomChange={this.handleZoomChange}
+            destinations={this.state.topStations}
             googleMapURL="https://maps.googleapis.com/maps/api/js?key=AIzaSyC1SheoT7QbC2NwkAQnM50vckjfPJSXv6s&v=3.exp&libraries=geometry,drawing,places"
             loadingElement={<div style={{ height: `100%` }} />}
             containerElement={<div style={{ height: `80vh` }} />}
@@ -170,6 +180,7 @@ const styles = theme => {
     },
     textField: {
       width: 360,
+      marginBottom: 16,
     },
     menu: {
       width: 360,

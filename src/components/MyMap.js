@@ -25,11 +25,16 @@ class MyMap extends Component {
   }
 
   renderMarker(station) {
-    const match = this.props.selectedId === station.id;
+    const { selectedId, destinations } = this.props;
+    const match = selectedId === station.id;
+    const labels = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10'];
+    const index = destinations.findIndex(s => s.id === station.id);
+
     return (
       <Marker
         key={station.id}
         animation={match ? 4 : 0}
+        label={index !== -1 ? labels[index] : undefined}
         position={{ lat: station.latitude, lng: station.longitude }}
         onClick={() => this.handleMarkerClick(station.id)}
       >
@@ -43,7 +48,15 @@ class MyMap extends Component {
   }
 
   renderMarkers() {
-    return this.props.stations.map(this.renderMarker);
+    return this.props.destinations.length
+      ? this.props.stations
+          .filter(
+            s =>
+              this.props.destinations.find(t => t.id === s.id) ||
+              s.id === this.props.selectedId
+          )
+          .map(this.renderMarker)
+      : this.props.stations.map(this.renderMarker);
   }
 
   render() {
@@ -68,6 +81,7 @@ class MyMap extends Component {
 
 MyMap.propTypes = {
   center: PropTypes.object,
+  destinations: PropTypes.array,
   stations: PropTypes.array.isRequired,
   handleStationChange: PropTypes.func.isRequired,
   handleZoomChange: PropTypes.func.isRequired,
@@ -77,6 +91,7 @@ MyMap.propTypes = {
 
 MyMap.defaultProps = {
   center: { lat: 37.78637526861584, lng: -122.40490436553954 },
+  destinations: [],
   selectedId: 0,
   zoom: 10,
 };
