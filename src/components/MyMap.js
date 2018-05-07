@@ -13,9 +13,7 @@ class MyMap extends Component {
   constructor(props) {
     super(props);
 
-    this.state = {
-      infoIndex: undefined,
-    };
+    this.state = {};
 
     this.renderMarker = this.renderMarker.bind(this);
     this.renderMarkers = this.renderMarkers.bind(this);
@@ -23,18 +21,19 @@ class MyMap extends Component {
   }
 
   handleMarkerClick(id) {
-    this.setState({ infoIndex: id });
     this.props.handleStationChange(id);
   }
 
   renderMarker(station) {
+    const match = this.props.selectedId === station.id;
     return (
       <Marker
         key={station.id}
+        animation={match ? 4 : 0}
         position={{ lat: station.latitude, lng: station.longitude }}
         onClick={() => this.handleMarkerClick(station.id)}
       >
-        {this.state.infoIndex === station.id && (
+        {match && (
           <InfoWindow>
             <div>{station.name}</div>
           </InfoWindow>
@@ -48,19 +47,19 @@ class MyMap extends Component {
   }
 
   render() {
-    const station = this.props.stations[0];
-    const center = station
-      ? { lat: station.latitude, lng: station.longitude }
-      : { lat: 0, lng: 0 };
-
-    if (station === undefined) {
-      return null;
-    }
-
     return (
-      <GoogleMap defaultZoom={9} defaultCenter={center}>
+      <GoogleMap
+        ref={node => (this.node = node)}
+        defaultZoom={10}
+        defaultCenter={this.props.center}
+        center={this.props.center}
+        zoom={this.props.zoom}
+        onZoomChanged={() => {
+          this.props.handleZoomChange(this.node.getZoom());
+        }}
+      >
         <MarkerClusterer averageCenter enableRetinaIcons gridSize={60}>
-          {this.renderMarkers()}
+          {this.props.stations && this.renderMarkers()}
         </MarkerClusterer>
       </GoogleMap>
     );
@@ -68,8 +67,18 @@ class MyMap extends Component {
 }
 
 MyMap.propTypes = {
+  center: PropTypes.object,
   stations: PropTypes.array.isRequired,
   handleStationChange: PropTypes.func.isRequired,
+  handleZoomChange: PropTypes.func.isRequired,
+  selectedId: PropTypes.number,
+  zoom: PropTypes.number,
+};
+
+MyMap.defaultProps = {
+  center: { lat: 37.78637526861584, lng: -122.40490436553954 },
+  selectedId: 0,
+  zoom: 10,
 };
 
 export default withScriptjs(withGoogleMap(MyMap));
