@@ -71,7 +71,7 @@ class App extends Component {
       stations[s.id] = new Station(s, Areas);
     });
 
-    const trip_data = await csv('../data/ford_gobike/2017.csv');
+    const trip_data = await csv('../data/ford_gobike/mini.csv');
     const definedStations = stations.filter(e => e !== undefined);
     const trips = trip_data.map(t => new Trip(t, definedStations));
 
