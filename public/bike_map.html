@@ -36,7 +36,7 @@
         height: 100%;
         line-height: 30px;
         padding-left: 10px;
-        width: 25%;
+        width: 30%;
       }
       #window_content{
           font-size: 12px;
@@ -73,7 +73,7 @@
                 });
          var directionsService = new google.maps.DirectionsService;
          var directionsDisplay = new google.maps.DirectionsRenderer;
-         var matrixService = new google.maps.DistanceMatrixService;
+         var service = new google.maps.DistanceMatrixService();
          directionsDisplay.setMap(map);
 //         directionsDisplay.setPanel(document.getElementById('right-panel'));
          var card = d3.select("#station-selector");
@@ -128,7 +128,7 @@
         var gmarkers = new Array();
         
         
-        stations.forEach(t =>{
+         stations.forEach(t =>{
          var options =  dropdown.append("option").attr("value",[t.latitude,t.longitude]).text(t.name);
          var marker = new google.maps.Marker({
                         position: {lat: t.latitude, lng: t.longitude}
@@ -137,10 +137,11 @@
          marker.addListener('click', function(e) {
                  map.setZoom(9);
                  map.setCenter(marker.getPosition()); 
-                 getInfoWindow(t.name,map,marker);
                  var sel = document.getElementById('station-selector');
                  var start_latlon = sel.options[sel.selectedIndex].value;
-                  calculateAndDisplayRoute(directionsService,start_latlon,marker.getPosition());
+                 var start_station_name = sel.options[sel.selectedIndex].text;
+                 calculateAndDisplayRoute(directionsService,start_latlon,marker.getPosition());
+                 calDistanceandDuration(service,start_latlon,marker.getPosition(),marker,t.name,start_station_name);
             });
         
         });
@@ -149,6 +150,7 @@
         dropdown.on("change",function(d){
             var data = getMarkers(this.value)[0];
             var marker = data.value;
+            marker.setAnimation(4);
             var latlon = data.key;
             var sect = document.getElementById("station-selector");
             var text = sect.options[sect.selectedIndex].text;
@@ -157,6 +159,45 @@
             calculateAndDisplayMarkers(end_stations);
         }); 
         
+        function calDistanceandDuration(service,start_latlon,end_latlon,marker,end_station_name,start_station_name){
+            start_latlon = start_latlon.split(",");
+            var from = new google.maps.LatLng(parseFloat(start_latlon[0]),parseFloat(start_latlon[1]));
+            var dest = end_latlon;
+            var testres;
+            service.getDistanceMatrix(
+                {
+                    origins: [from],
+                    destinations: [dest],
+                    travelMode: 'BICYCLING'
+                }, callback);
+
+            function callback(response, status) {
+                if (status == 'OK') {
+                    var origins = response.originAddresses;
+                    var destinations = response.destinationAddresses;
+                    for (var i = 0; i < origins.length; i++) {
+                        var results = response.rows[i].elements;
+                        for (var j = 0; j < results.length; j++) {
+                            var element = results[j];
+                            var distance = element.distance.text;
+                            var duration = element.duration.text;
+                            var from = origins[i];
+                            var to = destinations[j];
+                        }
+                        testres= {"duration":duration,"distance":distance};
+                        getDistanceandDuration(testres,marker,end_station_name,start_station_name);
+                    }
+                }
+            }
+        }
+        function getDistanceandDuration(testres,marker,end_station_name,start_station_name){
+            var distance = testres.distance;
+            var duration = testres.duration;
+            var content = "<strong>From:</strong> "+start_station_name+"<br><strong>To:</strong> "+ end_station_name+"<br><strong>Distance:</strong> "+distance+"<br>"+
+                "<strong>Avg. Travel Time:</strong> "+duration;
+            infowindow.setContent(content);
+            infowindow.open(map,marker);  
+        }
         function setMapOnAll(map) {
             for(var i =0;i < Object.keys(gmarkers).length;i++){
                     gmarkers[i].value.setMap(map);
@@ -184,7 +225,6 @@
         
         function calculateAndDisplayRoute(service,start_latlon,end_stations){
             start_latlon = start_latlon.split(",");
-            console.log(end_stations);
              service.route({
               origin: {lat: parseFloat(start_latlon[0]), lng: parseFloat(start_latlon[1])},
               destination: end_stations,
@@ -216,12 +256,10 @@
             var data = getTripNumber(t);
             var trips = data[0];
             var latlon = data[1];
-            var contentString="<strong>From:</strong> "+t+"<br> <strong>To:</strong><br>";
+            var contentString="<strong>Station:</strong> "+t+"<br> <strong>Top 5 most popular trips:</strong><br>";
             for(var trip in trips){
                 contentString+= "<tr>"+
-                "<td width='80%'>"+
-                    "<button class='link' value='["+latlon[trips[trip][0]]+"]'>"+trips[trip][0]+"</button>"+
-                "</td>"+
+                "<td width='80%'>"+trips[trip][0]+"</td>"+
                 "<td width='20%'>"+trips[trip][1]+" trips</td></tr>";
             }
             return contentString;
