@@ -5,6 +5,7 @@ import {
   withGoogleMap,
   GoogleMap,
   Marker,
+  InfoWindow,
 } from 'react-google-maps';
 import { MarkerClusterer } from 'react-google-maps/lib/components/addons/MarkerClusterer';
 
@@ -12,8 +13,18 @@ class MyMap extends Component {
   constructor(props) {
     super(props);
 
+    this.state = {
+      infoIndex: undefined,
+    };
+
     this.renderMarker = this.renderMarker.bind(this);
     this.renderMarkers = this.renderMarkers.bind(this);
+    this.handleMarkerClick = this.handleMarkerClick.bind(this);
+  }
+
+  handleMarkerClick(id) {
+    this.setState({ infoIndex: id });
+    this.props.handleStationChange(id);
   }
 
   renderMarker(station) {
@@ -21,7 +32,14 @@ class MyMap extends Component {
       <Marker
         key={station.id}
         position={{ lat: station.latitude, lng: station.longitude }}
-      />
+        onClick={() => this.handleMarkerClick(station.id)}
+      >
+        {this.state.infoIndex === station.id && (
+          <InfoWindow>
+            <div>{station.name}</div>
+          </InfoWindow>
+        )}
+      </Marker>
     );
   }
 
@@ -41,11 +59,9 @@ class MyMap extends Component {
 
     return (
       <GoogleMap defaultZoom={9} defaultCenter={center}>
-        {this.props.isMarkerShown && (
-          <MarkerClusterer averageCenter enableRetinaIcons gridSize={60}>
-            {this.renderMarkers()}
-          </MarkerClusterer>
-        )}
+        <MarkerClusterer averageCenter enableRetinaIcons gridSize={60}>
+          {this.renderMarkers()}
+        </MarkerClusterer>
       </GoogleMap>
     );
   }
@@ -53,11 +69,7 @@ class MyMap extends Component {
 
 MyMap.propTypes = {
   stations: PropTypes.array.isRequired,
-  isMarkerShown: PropTypes.bool,
-};
-
-MyMap.defaultProps = {
-  isMarkerShown: true,
+  handleStationChange: PropTypes.func.isRequired,
 };
 
 export default withScriptjs(withGoogleMap(MyMap));
