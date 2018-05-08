@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no"/>
+     <div id="right-panel"></div>
+    <div id="map"></div>
+    <div id="bottom-panel"></div>
+    <div>
+        <text id="select-title">Start</text>
+        <select id="start-station-selector" class="station-selector">
+            <option selected>Select Station</option>
+        </select>
+    </div>
+    <div id="window_stations">
+    <table id="window_content"></table>
+    </div>
+    <script src="//maps.google.com/maps/api/js?sensor=true"></script>
+    <script src="https://d3js.org/d3.v5.min.js"></script>
+  <style>
+    * {
+      font-family: sans-serif;
+    }
+    html, body{
+          width: 100%;
+          height: 100%;
+          margin: 0;
+          padding: 0;
+        }
+      #map{
+        float: left;
+        height: 100%;
+        width: 60%;
+      }
+       #window_stations {
+        float: left;
+        font-family: 'Roboto','sans-serif';
+        height: 100%;
+        line-height: 30px;
+        padding-left: 10px;
+        width: 35%;
+      }
+      #window_content{
+          font-size: 12px;
+      }
+      #select-title{
+          font-family: Roboto;
+          font-size: 15px;
+          font-weight: 300;
+          margin-left: 12px;
+          margin-top: 10px;
+      }
+    .station-selector {
+        background-color: #fff;
+        font-family: Roboto;
+        font-size: 15px;
+        font-weight: 300;
+        margin-left: 12px;
+        padding: 0 11px 0 13px;
+        text-overflow: ellipsis;
+        width: 400px;
+        margin-top: 15px;
+      }
+      .station-selector#end-station-selector {
+          margin-left: 18px;
+          margin-top: 5px;
+      }
+
+      .station-selector:focus {
+        border-color: #4d90fe;
+      }
+      button.link { 
+          background:none;
+          border:none; 
+      }
+
+
+  </style>
+</head>
+
+<body>
+     <script>
+        var map = new google.maps.Map(d3.select("#map").node(), {
+                  zoom: 9,
+                  center: new google.maps.LatLng(37.76487, -122.41948),
+                  mapTypeId: google.maps.MapTypeId.TERRAIN,
+                  suppressInfoWindows: true,
+                });
+         
+         var card = d3.select("#start-station-selector");
+         map.controls[google.maps.ControlPosition.TOP_LEFT].push(card);
+         var window_stations = d3.select("#window_stations");
+         map.controls[google.maps.ControlPosition.BOTTOM_LEFT].push(window_stations);
+         var Point = google.maps.Point;
+         var Marker = google.maps.Marker;
+         
+            
+        </script>
+
+  <script>
+    class Trip {
+      constructor(obj, stations) {
+
+        this.bike_id = +obj.bike_id;
+        this.duration = +obj.duration_sec;
+
+        // TODO: Timezone is not correct in Safari
+        this.start_station = stations.find(e => e.id === +obj.start_station_id);
+        this.start_time = new Date(obj.start_time.replace(' ', 'T'));
+        this.end_station = stations.find(e => e.id === +obj.end_station_id);
+        this.end_time = new Date(obj.end_time.replace(' ', 'T'));
+        this.user_type = obj.user_type;
+        this.member_birth_year = +obj.member_birth_year;
+        this.member_gender = +obj.member_gender;
+      }
+    }
+
+    class Station {
+      constructor(obj) {
+        this.id = +obj.id;
+        this.name = obj.name;
+        this.latitude = +obj.latitude;
+        this.longitude = +obj.longitude;
+      }
+
+      toString() { return this.name; }
+    }
+
+    async function main() {
+      const station_data = await d3.csv('data/ford_gobike/stations.csv');
+      const stations_unfiltered = [];
+      station_data.forEach(s => {
+        stations_unfiltered[s.id] = new Station(s);
+      });
+        
+        const stations = stations_unfiltered.filter(e => e !== undefined);
+        const trip_data = await d3.csv('data/ford_gobike/mini.csv');
+        const trips = trip_data.map(t => new Trip(t, stations));
+        const bayarea_map = await d3.json('data/ford_gobike/bay_area.json');
+        var start_dropdown = d3.select("#start-station-selector");
+        var end_dropdown = d3.select("#end-station-selector");
+        var radios = d3.select("#form-radio");
+        var infowindow = new google.maps.InfoWindow();
+        var window_stations = d3.select("#window_stations");
+        var gmarkers = new Array();  
+         var gCurvedlines = new Array();
+       
+         stations.forEach(t =>{
+         var options =  start_dropdown.append("option").attr("value",[t.latitude,t.longitude]).text(t.name);
+         var marker = new google.maps.Marker({
+                        position: {lat: t.latitude, lng: t.longitude}
+                    });
+         gmarkers.push({'key':t.latitude+","+t.longitude,'value':marker});      
+         marker.addListener('click', function(e) {
+                 map.setZoom(13);
+                 map.setCenter(marker.getPosition()); 
+                 var sel = document.getElementById('start-station-selector');
+                 var start_latlon = sel.options[sel.selectedIndex].value;
+                 var start_station_name = sel.options[sel.selectedIndex].text;
+                 var end_stations = getTripNumber(start_station_name)[1];
+            });
+        marker.addListener('mouseover',function(e){
+                var end_stations = getEndStations(marker);
+                getPolylines(marker,end_stations); 
+        });
+        marker.addListener('mouseout',function(e){
+              if(gCurvedlines.length != 0){
+                 gCurvedlines.forEach(curvedline =>{
+                    removeCurvedLine(curvedline);
+                })
+             }
+        });
+        
+        });
+        setMapOnAll(map);
+        
+        start_dropdown.on("change",function(d){
+            var data = getMarkers(this.value)[0];
+            var marker = data.value;
+            marker.setAnimation(4);
+            var latlon = data.key;
+            var sect = document.getElementById("start-station-selector");
+            var text = sect.options[sect.selectedIndex].text;
+            var end_stations = getTripNumber(text)[1];
+            getInfoWindow(text,map,marker);
+            calculateAndDisplayMarkers(end_stations,getTripNumber(text)[0]);
+                 
+        }); 
+        
+        
+     function updateCurveMarker(start_station,end_station) {
+
+            var pos1 = start_station.getPosition(), // latlng
+                pos2 = end_station,
+                projection = map.getProjection(),
+                p1 = projection.fromLatLngToPoint(pos1), // xy
+                p2 = projection.fromLatLngToPoint(pos2),
+                curvature = 0.5,curveMarker;
+
+            var e = new Point(p2.x - p1.x, p2.y - p1.y), // endpoint (p2 relative to p1)
+                m = new Point(e.x / 2, e.y / 2); // midpoint
+            var  o;// orthogonal
+            if(e.y >= 0){
+                o = new Point(-e.y, e.x);
+            }else{
+                o = new Point(e.y, -e.x);
+            }
+         
+            var c = new Point( // curve control point
+                    m.x + curvature * o.x,
+                    m.y + curvature * o.y);
+    //
+            var pathDef = 'M 0,0 ' +
+                'q ' + c.x + ',' + c.y + ' ' + e.x + ',' + e.y;
+    //
+            var zoom = map.getZoom(),
+                scale = 1 / (Math.pow(2, -zoom));
+    //
+            var symbol = {
+                path: pathDef,
+                scale: scale,
+                strokeWeight: 0.7,
+                fillColor: 'None',
+//                strokeColor: 'grey',
+                strokeOpacity: 0.8
+            };
+    //
+            if (!curveMarker) {
+                curveMarker = new Marker({
+                    position: pos1,
+                    clickable: false,
+                    icon: symbol,
+                    zIndex: gmarkers.length, // behind the other markers
+                    map: map,
+                    optimized: false,
+                });
+            } else {
+                curveMarker.setOptions({
+                    position: pos1,
+                    icon: symbol,
+                    optimized: false,
+                });
+            }
+            gCurvedlines.push(curveMarker);
+        }
+        
+        function getPolylines(marker,end_stations){  
+                for(var i in end_stations){
+                    var destination = new google.maps.LatLng(parseFloat(end_stations[i][0]),parseFloat(end_stations[i][1]));
+                    updateCurveMarker(marker,destination);
+                }  
+        }
+        
+        function removeCurvedLine(geodesicPoly) {
+            geodesicPoly.setMap(null);
+        }
+    
+//        function calDistanceandDuration(service,start_latlon,end_latlon,marker,end_station_name,start_station_name){
+//            start_latlon = start_latlon.split(",");
+//            var from = new google.maps.LatLng(parseFloat(start_latlon[0]),parseFloat(start_latlon[1]));
+//            var dest = end_latlon;
+//            var testres;
+//            service.getDistanceMatrix(
+//                {
+//                    origins: [from],
+//                    destinations: [dest],
+//                    travelMode: 'BICYCLING'
+//                }, callback);
+//
+//            function callback(response, status) {
+//                if (status == 'OK') {
+//                    var origins = response.originAddresses;
+//                    var destinations = response.destinationAddresses;
+//                    for (var i = 0; i < origins.length; i++) {
+//                        var results = response.rows[i].elements;
+//                        for (var j = 0; j < results.length; j++) {
+//                            var element = results[j];
+//                            var distance = element.distance.text;
+//                            var duration = element.duration.text;
+//                            var from = origins[i];
+//                            var to = destinations[j];
+//                        }
+//                        testres= {"duration":duration,"distance":distance};
+//                        getDistanceandDuration(testres,marker,end_station_name,start_station_name);
+//                    }
+//                }
+//            }
+//        }
+//        function getDistanceandDuration(testres,marker,end_station_name,start_station_name){
+//            var distance = testres.distance;
+//            var duration = testres.duration;
+//            var content = "<strong>From:</strong> "+start_station_name+"<br><strong>To:</strong> "+ end_station_name+"<br><strong>Distance:</strong> "+distance+"<br>"+
+//                "<strong>Avg. Travel Time:</strong> "+duration;
+//            infowindow.setContent(content);
+//            infowindow.open(map,marker);  
+//        }
+        function setMapOnAll(map) {
+            for(var i =0;i < Object.keys(gmarkers).length;i++){
+                    gmarkers[i].value.setMap(map);
+            }
+        }
+        function clearMarkers() {
+            setMapOnAll(null);
+        }
+        function showMarkers() {
+            setMapOnAll(map);
+        }
+        function getMarkers(latlon){
+            return gmarkers.filter(x => x.key === latlon);
+        }
+        function setMarkersOnMap(trips,topN_stations){
+            var arr = [];
+            for(var trip in trips){
+                var latlon = trips[trip];
+                arr.push(gmarkers.filter(x => x.key === latlon.toString()));
+            }
+            for(var i =0;i < Object.keys(arr).length;i++){
+                arr[i][0].value.setMap(map);
+            }
+            
+        } 
+//        
+//        function calculateAndDisplayRoute(service,start_latlon,end_stations){
+//             start_latlon = start_latlon.split(",");
+//             service.route({
+//              origin: {lat: parseFloat(start_latlon[0]), lng: parseFloat(start_latlon[1])},
+//              destination: end_stations,
+//              travelMode: 'BICYCLING'
+//            }, function(response, status) {
+//              if (status === 'OK') {
+//                directionsDisplay.setDirections(response);
+//              } else {
+//                window.alert('Directions request failed due to ' + status);
+//              }
+//            });  
+//        }
+         function calculateAndDisplayMarkers(end_stations,topN_stations) {
+            map.setZoom(15);
+            clearMarkers();
+            setMarkersOnMap(end_stations,topN_stations); 
+      }
+        
+        function getInfoWindow(t,map,marker) {
+            var contentString = getWindowContent(t,"viewstation");
+//            var contentString = getWindowContent(t,"viewtopend")
+//            var contentString = getWindowContent(t,"viewtopstart");
+            window_stations.selectAll("table").html(contentString);
+            infowindow.setContent(t);
+            infowindow.open(map,marker);   
+            map.setZoom(12);
+            map.setCenter(marker.getPosition());
+        }
+       
+        
+        function getWindowContent(t,string){
+            var data,contentString;
+            if(string == "viewstation"){
+                data = getTripNumber(t);
+                var trips = data[0];
+                var latlon = data[1];
+                contentString="<strong>Top 10 Trips of "+t+"</strong><br>";
+                for(var trip in trips){
+                    contentString+= "<tr>"+
+                    "<td width='90%'>"+(parseInt(trip)+1)+". "+trips[trip][0]+"</td>"+
+                    "<td width='10%'>"+trips[trip][1]+" trips</td>"+
+                    "</tr>";
+                }
+            }
+            else if(string == "viewtopstart"){
+                data = getMostPopularStation()[0];
+                contentString = "<strong>Top 10 Starting Stations:</strong><br>";
+                for(var d in data){
+                    contentString +="<td width='80%'>"+(parseInt(d)+1)+". "+data[d][0]+"</td>";
+                    contentString +="<td width='20%'>"+data[d][1]+" trips</td></tr>";
+                }
+            }
+            else if(string == "viewtopend"){
+                data = getMostPopularStation()[1];
+                contentString = "<strong>Top 10 Destination Stations:</strong><br>";
+                for(var d in data){
+                    contentString +="<td width='80%'>"+(parseInt(d)+1)+". "+data[d][0]+"</td>";
+                    contentString +="<td width='20%'>"+data[d][1]+" trips</td></tr>";
+                }
+            }
+            
+            return contentString;
+        }
+
+        function getTripNumber(name){
+            var end_stations = new Array();
+            var end_stations_latlon = [];
+            trips.forEach(trip=>{
+                if(trip.start_station.name == name){
+                    end_stations[trip.end_station.name] = end_stations[trip.end_station.name] ? end_stations[trip.end_station.name] + 1 : 1;
+                    end_stations_latlon[trip.end_station.name] = [trip.end_station.latitude,trip.end_station.longitude];
+                }
+            });
+            return [getTopN(sortedArray(end_stations).reverse(),10),end_stations_latlon];
+        } 
+        
+        
+        function getEndStations(marker){
+            var latlon = getLatLon(marker.getPosition());
+            var end_stations = new Array();
+            var end_stations_latlon = [];
+            trips.forEach(trip=>{
+                if(trip.start_station.latitude == latlon[0] && trip.start_station.longitude == latlon[1]){
+                      end_stations_latlon[trip.end_station.name] = [trip.end_station.latitude,trip.end_station.longitude];
+                    }
+            });
+            return end_stations_latlon;
+        } 
+         function getLatLon(marker){
+            return [marker.lat(),marker.lng()];
+        }
+        
+        
+        function getTopN(data,number){
+            var newArray = data.slice(0, number);
+            return newArray;
+        }
+        
+        function getMostPopularStation(){
+            var start_stations = new Array();
+            var end_stations = new Array();
+            trips.forEach(trip=>{
+                    start_stations[trip.start_station.name] =  start_stations[trip.start_station.name] ? start_stations[trip.start_station.name] + 1 : 1;
+                    end_stations[trip.end_station.name] =  end_stations[trip.end_station.name] ? end_stations[trip.end_station.name] + 1 : 1;
+            });
+            return [getTopN(sortedArray(start_stations).reverse(),10),getTopN(sortedArray(end_stations).reverse(),10)];
+        } 
+        
+        function sortedArray(data){
+            var sortable = [];
+            for (var x in data ) {
+                sortable.push([x, data[x]]);
+            }
+            sortable.sort(function(a, b) {
+                return a[1] - b[1];
+            });
+            return sortable;
+        }
+
+         
+        };
+
+
+    main();
+
+  </script>
+</body>
