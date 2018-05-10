@@ -61,6 +61,9 @@ class MyMap extends Component {
   }
 
   render() {
+    const { selectedId, stations } = this.props;
+    const isClustered = stations.findIndex(s => s.id === selectedId) === -1;
+
     return (
       <GoogleMap
         ref={node => (this.node = node)}
@@ -73,9 +76,12 @@ class MyMap extends Component {
           this.props.handleZoomChange(this.node.getZoom());
         }}
       >
-        <MarkerClusterer averageCenter enableRetinaIcons gridSize={60}>
-          {this.props.stations && this.renderMarkers()}
-        </MarkerClusterer>
+        {isClustered && (
+          <MarkerClusterer averageCenter enableRetinaIcons gridSize={60}>
+            {stations && this.renderMarkers()}
+          </MarkerClusterer>
+        )}
+        {!isClustered && (stations && this.renderMarkers())}
       </GoogleMap>
     );
   }
