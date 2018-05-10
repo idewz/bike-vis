@@ -118,7 +118,7 @@ class Dashboard extends Component {
     ];
 
     const daysData = this.ridesPerDay(trips);
-    const daysBand = ['S', 'M', 'Tu', 'W', 'Th', 'F', 'Sa'];
+    const daysBand = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
     const rideMatrix = this.getRideMatrix(this.props.trips);
     const months = [
