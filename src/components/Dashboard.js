@@ -162,16 +162,25 @@ class Dashboard extends Component {
           <NumberCardList cards={cards} />
 
           <Grid item xs={11}>
-            <Typography variant="headline">Gender</Typography>
+            <Grid container>
+              <Grid item xs={6}>
+                <Typography variant="headline">Gender</Typography>
+              </Grid>
+              <Grid item xs={6}>
+                <Typography variant="headline">User Type</Typography>
+              </Grid>
+            </Grid>
           </Grid>
+
           <Grid item xs={11}>
-            <MenWomenChart trips={trips} />
-          </Grid>
-          <Grid item xs={11}>
-            <Typography variant="headline">User Type</Typography>
-          </Grid>
-          <Grid item xs={11}>
-            <MemberChart trips={trips} />
+            <Grid container>
+              <Grid item xs={6}>
+                <MenWomenChart trips={trips} />
+              </Grid>
+              <Grid item xs={6}>
+                <MemberChart trips={trips} />
+              </Grid>
+            </Grid>
           </Grid>
 
           <Grid item xs={11}>
