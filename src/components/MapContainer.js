@@ -102,12 +102,11 @@ class MapContainer extends Component {
 
   render() {
     const { classes, stations, stationIndices } = this.props;
-    const index = stationIndices[this.state.selectedId];
+    const { selectedId } = this.state;
+    const index = stationIndices[selectedId];
     const station =
-      index !== undefined
-        ? stations[stationIndices[this.state.selectedId]]
-        : undefined;
-    const topStations = this.findTopStations(this.state.selectedId);
+      index !== undefined ? stations[stationIndices[selectedId]] : undefined;
+    const topStations = this.findTopStations(selectedId);
 
     return (
       <Grid container spacing={24}>
@@ -169,7 +168,6 @@ MapContainer.propTypes = {
   classes: PropTypes.object.isRequired,
   stations: PropTypes.array.isRequired,
   stationIndices: PropTypes.object.isRequired,
-  theme: PropTypes.object.isRequired,
   trips: PropTypes.array.isRequired,
 };
 

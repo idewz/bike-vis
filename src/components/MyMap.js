@@ -60,28 +60,54 @@ class MyMap extends Component {
       : this.props.stations.map(this.renderMarker);
   }
 
+  findCenter(stations) {
+    const s1 = stations[0];
+    const coordinates = {
+      x1: s1.latitude,
+      y1: s1.longitude,
+      x2: s1.latitude,
+      y2: s1.longitude,
+    };
+    stations.forEach(s => {
+      coordinates.x1 = Math.min(coordinates.x1, s.latitude);
+      coordinates.y1 = Math.min(coordinates.y1, s.longitude);
+      coordinates.x2 = Math.max(coordinates.x2, s.latitude);
+      coordinates.y2 = Math.max(coordinates.y2, s.longitude);
+    });
+
+    const { x1, y1, x2, y2 } = coordinates;
+
+    return { lat: x1 + (x2 - x1) / 2, lng: y1 + (y2 - y1) / 2 };
+  }
+
   render() {
     const { selectedId, stations } = this.props;
-    const isClustered = stations.findIndex(s => s.id === selectedId) === -1;
+    const stationNotFound = stations.findIndex(s => s.id === selectedId) === -1;
+    let currentCenter = this.props.center;
+    let currentZoom = this.props.zoom;
+
+    if (stationNotFound && stations.length > 0) {
+      currentCenter = this.findCenter(stations);
+      currentZoom = 10;
+    }
 
     return (
       <GoogleMap
         ref={node => (this.node = node)}
         defaultZoom={10}
-        defaultCenter={this.props.center}
         defaultOptions={{ styles }}
-        center={this.props.center}
-        zoom={this.props.zoom}
+        center={currentCenter}
+        zoom={currentZoom}
         onZoomChanged={() => {
           this.props.handleZoomChange(this.node.getZoom());
         }}
       >
-        {isClustered && (
+        {stationNotFound && (
           <MarkerClusterer averageCenter enableRetinaIcons gridSize={60}>
             {stations && this.renderMarkers()}
           </MarkerClusterer>
         )}
-        {!isClustered && (stations && this.renderMarkers())}
+        {!stationNotFound && (stations && this.renderMarkers())}
       </GoogleMap>
     );
   }
