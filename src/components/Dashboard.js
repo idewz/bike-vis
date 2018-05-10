@@ -14,6 +14,7 @@ import PlaceIcon from '@material-ui/icons/Place';
 import TimerIcon from '@material-ui/icons/Timer';
 
 import BarChart from './BarChart';
+import MapContainer from './MapContainer';
 import MemberChart from './MemberChart';
 import MenWomenChart from './MenWomenChart';
 import NumberCardList from './NumberCardList';
@@ -54,11 +55,6 @@ class Dashboard extends Component {
       return 0;
     }
 
-    // let total = 0;
-
-    // trips.forEach(trip => {
-    //   total += trip.duration;
-    // });
     const total = trips.reduce(
       (previousValue, currentValue) => previousValue + currentValue.duration,
       0
@@ -146,7 +142,7 @@ class Dashboard extends Component {
     return (
       <Grid container>
         <Grid container spacing={24} justify="center" className={classes.grid}>
-          <Grid item xs={8} className={classes.slider}>
+          <Grid item xs={11} className={classes.slider}>
             <Range
               defaultValue={[0, 12]}
               value={this.props.sliderValue}
@@ -161,20 +157,20 @@ class Dashboard extends Component {
 
           <NumberCardList cards={cards} />
 
-          <Grid item xs={8}>
+          <Grid item xs={11}>
             <Typography variant="headline">Gender</Typography>
           </Grid>
-          <Grid item xs={8}>
+          <Grid item xs={11}>
             <MenWomenChart trips={trips} />
           </Grid>
-          <Grid item xs={8}>
+          <Grid item xs={11}>
             <Typography variant="headline">User Type</Typography>
           </Grid>
-          <Grid item xs={8}>
+          <Grid item xs={11}>
             <MemberChart trips={trips} />
           </Grid>
 
-          <Grid item xs={8}>
+          <Grid item xs={11}>
             <Grid container>
               <Grid item xs={6}>
                 <Typography variant="headline">Rides by Time of Day</Typography>
@@ -183,18 +179,29 @@ class Dashboard extends Component {
             </Grid>
           </Grid>
 
-          <Grid item xs={8}>
+          <Grid item xs={11}>
             <Typography variant="headline">Number of Rides per Hour</Typography>
           </Grid>
-          <Grid item xs={8}>
+          <Grid item xs={11}>
             <BarChart data={hoursData} bands={hoursBand} />
           </Grid>
 
-          <Grid item xs={8}>
+          <Grid item xs={11}>
             <Typography variant="headline">Number of Rides per Day</Typography>
           </Grid>
-          <Grid item xs={8}>
+          <Grid item xs={11}>
             <BarChart data={daysData} bands={daysBand} />
+          </Grid>
+
+          <Grid item xs={11}>
+            <Typography variant="headline">Stations</Typography>
+          </Grid>
+          <Grid item xs={11}>
+            <MapContainer
+              stations={this.props.stations}
+              stationIndices={this.props.stationIndices}
+              trips={this.props.trips}
+            />
           </Grid>
         </Grid>
       </Grid>
@@ -206,6 +213,7 @@ Dashboard.propTypes = {
   classes: PropTypes.object.isRequired,
   theme: PropTypes.object.isRequired,
   stations: PropTypes.array.isRequired,
+  stationIndices: PropTypes.object.isRequired,
   trips: PropTypes.array.isRequired,
   sliderValue: PropTypes.array.isRequired,
   handleSliderChange: PropTypes.func.isRequired,

@@ -25,7 +25,6 @@ import Trip from '../../models/Trip';
 
 import './App.css';
 import logo from '../../bike_black_48px.svg';
-import MapContainer from '../MapContainer';
 
 const theme = createMuiTheme({
   overrides: {
@@ -265,7 +264,6 @@ class App extends Component {
                   <Tab value="/" label="Dashboard" />
                   <Tab value="/data" label="Data" />
                   <Tab value="/members" label="Members" />
-                  <Tab value="/stations" label="Stations" />
                 </Tabs>
               )}
             />
@@ -278,6 +276,7 @@ class App extends Component {
                 render={() => (
                   <Dashboard
                     stations={this.state.stations}
+                    stationIndices={this.state.stationIndices}
                     trips={this.state.trips}
                     handleSliderChange={this.handleSliderChange}
                     handleSliderAfterChange={this.handleSliderAfterChange}
@@ -286,22 +285,12 @@ class App extends Component {
                 )}
               />
               <Route
-                path="/members"
-                render={() => <Bubble trips={this.state.trips} />}
-              />
-              <Route
-                path="/stations"
-                render={() => (
-                  <MapContainer
-                    stations={this.state.stations}
-                    stationIndices={this.state.stationIndices}
-                    trips={this.state.trips}
-                  />
-                )}
-              />
-              <Route
                 path="/data"
                 render={() => <DataViewer trips={this.state.trips} />}
+              />
+              <Route
+                path="/members"
+                render={() => <Bubble trips={this.state.trips} />}
               />
             </Switch>
           </main>
