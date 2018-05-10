@@ -176,25 +176,21 @@ class Dashboard extends Component {
 
           <Grid item xs={11}>
             <Grid container>
-              <Grid item xs={6}>
+              <Grid item xs={4}>
                 <Typography variant="headline">Rides by Time of Day</Typography>
                 <TimeMatrix matrix={rideMatrix} unit="trips" />
               </Grid>
+
+              <Grid item xs={6}>
+                <Grid item xs={12}>
+                  <BarChart data={hoursData} bands={hoursBand} />
+                </Grid>
+
+                <Grid item xs={12}>
+                  <BarChart data={daysData} bands={daysBand} />
+                </Grid>
+              </Grid>
             </Grid>
-          </Grid>
-
-          <Grid item xs={11}>
-            <Typography variant="headline">Number of Rides per Hour</Typography>
-          </Grid>
-          <Grid item xs={11}>
-            <BarChart data={hoursData} bands={hoursBand} />
-          </Grid>
-
-          <Grid item xs={11}>
-            <Typography variant="headline">Number of Rides per Day</Typography>
-          </Grid>
-          <Grid item xs={11}>
-            <BarChart data={daysData} bands={daysBand} />
           </Grid>
 
           <Grid item xs={11}>
