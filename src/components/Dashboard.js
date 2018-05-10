@@ -111,7 +111,11 @@ class Dashboard extends Component {
     ];
 
     const hoursData = this.ridesPerHour(trips);
-    const hoursBand = Array.from(new Array(24), (x, i) => i);
+    const hours = [12, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
+    const hoursBand = [
+      ...hours.map(h => `${h} am`),
+      ...hours.map(h => `${h} pm`),
+    ];
 
     const daysData = this.ridesPerDay(trips);
     const daysBand = ['S', 'M', 'Tu', 'W', 'Th', 'F', 'Sa'];
