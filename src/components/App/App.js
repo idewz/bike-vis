@@ -54,6 +54,7 @@ class App extends Component {
       allStations: [],
       allTrips: [],
       stations: [],
+      stationIndices: {},
       trips: [],
       value: '/',
     };
@@ -73,13 +74,21 @@ class App extends Component {
 
     const trip_data = await csv('../data/ford_gobike/2017.csv');
     const definedStations = stations.filter(e => e !== undefined);
-    const trips = trip_data.map(t => new Trip(t, definedStations));
+    const stationIndices = definedStations.reduce((acc, cur, i) => {
+      acc[cur.id] = i;
+      return acc;
+    }, {});
+
+    const trips = trip_data.map(
+      t => new Trip(t, definedStations, stationIndices)
+    );
 
     this.setState({
       allStations: definedStations,
       allTrips: trips,
       areaTrips: trips,
       stations: definedStations,
+      stationIndices,
       trips,
     });
   }
@@ -119,10 +128,15 @@ class App extends Component {
       t => t.start_station.area.id === area || t.end_station.area.id === area
     );
     const stations = this.state.allStations.filter(s => s.area.id === area);
+    const stationIndices = stations.reduce((acc, cur, i) => {
+      acc[cur.id] = i;
+      return acc;
+    }, {});
 
     this.setState({
       filterArea: area,
       stations,
+      stationIndices,
       areaTrips: trips,
       trips,
     });
@@ -280,6 +294,7 @@ class App extends Component {
                 render={() => (
                   <MapContainer
                     stations={this.state.stations}
+                    stationIndices={this.state.stationIndices}
                     trips={this.state.trips}
                   />
                 )}

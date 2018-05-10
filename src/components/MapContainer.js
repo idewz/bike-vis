@@ -29,8 +29,8 @@ class MapContainer extends Component {
 
   handleStationChange(selectedId, updateCenter = false) {
     if (updateCenter) {
-      const { stations } = this.props;
-      const station = stations.find(e => e.id === selectedId);
+      const { stations, stationIndices } = this.props;
+      const station = stations[stationIndices[selectedId]];
       const center = station
         ? { lat: station.latitude, lng: station.longitude }
         : { lat: 37.78637526861584, lng: -122.40490436553954 };
@@ -68,8 +68,13 @@ class MapContainer extends Component {
   }
 
   renderDestination(id, index, count) {
-    const { stations } = this.props;
-    const station = stations.find(s => s.id === id);
+    const { stations, stationIndices } = this.props;
+    const i = stationIndices[id];
+    const station = index ? stations[i] : undefined;
+
+    if (!station) {
+      return null;
+    }
 
     return (
       <Grid container key={station.id} justify="space-between">
@@ -104,10 +109,11 @@ class MapContainer extends Component {
   }
 
   render() {
-    const { classes, stations } = this.props;
-    const station = this.props.stations.find(
-      e => e.id === this.state.selectedId
-    );
+    const { classes, stations, stationIndices } = this.props;
+    const index = stationIndices[this.state.selectedId];
+    const station = index
+      ? stations[stationIndices[this.state.selectedId]]
+      : undefined;
 
     return (
       <Grid container spacing={24}>
@@ -168,6 +174,7 @@ class MapContainer extends Component {
 MapContainer.propTypes = {
   classes: PropTypes.object.isRequired,
   stations: PropTypes.array.isRequired,
+  stationIndices: PropTypes.object.isRequired,
   theme: PropTypes.object.isRequired,
   trips: PropTypes.array.isRequired,
 };
