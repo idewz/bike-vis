@@ -18,7 +18,6 @@ class MapContainer extends Component {
 
     this.state = {
       selectedId: 0,
-      topStations: [],
     };
 
     this.handleStationChange = this.handleStationChange.bind(this);
@@ -38,9 +37,8 @@ class MapContainer extends Component {
 
       this.setState({ center, zoom });
     }
-    const topStations = this.findTopStations(selectedId);
 
-    this.setState({ selectedId, topStations });
+    this.setState({ selectedId });
   }
 
   handleSelectChange(e) {
@@ -70,11 +68,7 @@ class MapContainer extends Component {
   renderDestination(id, index, count) {
     const { stations, stationIndices } = this.props;
     const i = stationIndices[id];
-    const station = index ? stations[i] : undefined;
-
-    if (!station) {
-      return null;
-    }
+    const station = stations[i];
 
     return (
       <Grid container key={station.id} justify="space-between">
@@ -90,9 +84,9 @@ class MapContainer extends Component {
     );
   }
 
-  renderDestinationList() {
+  renderDestinationList(topStations) {
     return (
-      this.state.topStations && (
+      topStations && (
         <div>
           <Typography
             variant="body2"
@@ -100,9 +94,7 @@ class MapContainer extends Component {
           >
             Top 10 Destinations
           </Typography>
-          {this.state.topStations.map((s, i) =>
-            this.renderDestination(s.id, i, s.trips)
-          )}
+          {topStations.map((s, i) => this.renderDestination(s.id, i, s.trips))}
         </div>
       )
     );
@@ -111,9 +103,11 @@ class MapContainer extends Component {
   render() {
     const { classes, stations, stationIndices } = this.props;
     const index = stationIndices[this.state.selectedId];
-    const station = index
-      ? stations[stationIndices[this.state.selectedId]]
-      : undefined;
+    const station =
+      index !== undefined
+        ? stations[stationIndices[this.state.selectedId]]
+        : undefined;
+    const topStations = this.findTopStations(this.state.selectedId);
 
     return (
       <Grid container spacing={24}>
@@ -125,7 +119,7 @@ class MapContainer extends Component {
             selectedId={this.state.selectedId}
             handleStationChange={this.handleStationChange}
             handleZoomChange={this.handleZoomChange}
-            destinations={this.state.topStations}
+            destinations={topStations}
             googleMapURL="https://maps.googleapis.com/maps/api/js?key=AIzaSyC1SheoT7QbC2NwkAQnM50vckjfPJSXv6s&v=3.exp&libraries=geometry,drawing,places"
             loadingElement={<div style={{ height: `100%` }} />}
             containerElement={<div style={{ height: `80vh` }} />}
@@ -161,7 +155,7 @@ class MapContainer extends Component {
                 </Typography>
               </Grid>
               <Grid item xs={10}>
-                {this.renderDestinationList()}
+                {this.renderDestinationList(topStations)}
               </Grid>
             </Grid>
           )}
