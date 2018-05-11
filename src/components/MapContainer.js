@@ -74,7 +74,7 @@ class MapContainer extends Component {
       <Grid container key={station.id} justify="space-between">
         <Grid>
           <Typography variant="body1">
-            {index + 1}. {station.name}
+            {index + 1}. {station.name.replace(/\(.*\)/, '')}
           </Typography>
         </Grid>
         <Grid item>
