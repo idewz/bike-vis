@@ -16,7 +16,7 @@ import TimerIcon from '@material-ui/icons/Timer';
 import BarChart from './BarChart';
 import MapContainer from './MapContainer';
 import MemberChart from './MemberChart';
-import MenWomenChart from './MenWomenChart';
+import GenderChart from './GenderChart';
 import NumberCardList from './NumberCardList';
 import TimeMatrix from './TimeMatrix';
 import { niceNumber } from '../utils';
@@ -175,7 +175,7 @@ class Dashboard extends Component {
           <Grid item xs={11}>
             <Grid container>
               <Grid item xs={6}>
-                <MenWomenChart trips={trips} />
+                <GenderChart trips={trips} />
               </Grid>
               <Grid item xs={6}>
                 <MemberChart trips={trips} />

@@ -10,16 +10,16 @@ By [Siwadon Saosoong](https://github.com/idewz) and [Surada Lerkpatomsak](https:
 
 ### Project Structure
 
-This is a `create-react-app` app with D3 chart components. The source files are inside `src/` and the data is in `public/data/ford_gobike`.
+This is a `create-react-app` app with D3 chart components and Google Maps JavaScript API. The source files are inside `src/` and the data is in `public/data/ford_gobike`.
 
 These are main chart components in `src/components/`
 
 ```bash
 src/components
 ├── BarChart.js
+├── GenderChart.js
 ├── MapContainer.js
 ├── MemberChart.js
-├── MenWomenChart.js
 ├── MyMap.js
 ├── NestedMap.js
 └── TimeMatrix.js
