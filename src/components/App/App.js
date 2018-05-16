@@ -10,7 +10,6 @@ import {
 } from 'material-ui/styles';
 import AppBar from 'material-ui/AppBar';
 import MenuItem from 'material-ui/Menu/MenuItem';
-import Tabs, { Tab } from 'material-ui/Tabs';
 import TextField from 'material-ui/TextField';
 import Toolbar from 'material-ui/Toolbar';
 import Typography from 'material-ui/Typography';
@@ -255,17 +254,6 @@ class App extends Component {
                 ))}
               </TextField>
             </Toolbar>
-            <Route
-              render={({ history }) => (
-                <Tabs
-                  value={this.state.value}
-                  onChange={(e, v) => this.handleTabChange(e, v, history)}
-                >
-                  <Tab value="/" label="Dashboard" />
-                  <Tab value="/data" label="Data" />
-                </Tabs>
-              )}
-            />
           </AppBar>
           <main className={this.props.classes.root}>
             <Switch>
@@ -307,7 +295,7 @@ App.propTypes = {
 const styles = theme => {
   return {
     root: {
-      marginTop: theme.spacing.unit * 3,
+      marginTop: 0,
     },
     appBar: {
       color: 'black',
