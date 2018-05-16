@@ -263,7 +263,6 @@ class App extends Component {
                 >
                   <Tab value="/" label="Dashboard" />
                   <Tab value="/data" label="Data" />
-                  <Tab value="/members" label="Members" />
                 </Tabs>
               )}
             />
