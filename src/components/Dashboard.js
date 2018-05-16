@@ -148,7 +148,7 @@ class Dashboard extends Component {
         <Grid container spacing={24} justify="center" className={classes.grid}>
           <Grid item xs={11} className={classes.slider}>
             <Range
-              defaultValue={[0, 12]}
+              defaultValue={[5, 12]}
               value={this.props.sliderValue}
               min={0}
               max={12}

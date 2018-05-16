@@ -47,7 +47,7 @@ class App extends Component {
     this.state = {
       filterArea: 0,
       filterGender: -1,
-      filterMonth: [0, 12],
+      filterMonth: [5, 12],
 
       allStations: [],
       allTrips: [],
