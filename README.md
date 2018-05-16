@@ -1,6 +1,6 @@
 # Bike Sharing
 
-[![Build Status](https://travis-ci.org/idewz/cs560-project.svg?branch=master)](https://travis-ci.org/idewz/cs560-project)
+[![Build Status](https://travis-ci.org/idewz/bike-vis.svg?branch=master)](https://travis-ci.org/idewz/bike-vis)
 
 Bike Sharing [bike-vis.firebaseapp.com](https://bike-vis.firebaseapp.com)
 
@@ -38,9 +38,9 @@ To create a production bundle, use `yarn build` (or `npm run build`).
 We use data from Ford Gobike [historical trip data](https://s3.amazonaws.com/fordgobike-data/index.html),
 but we have modified the original file to make it smaller by extracting stations information into a separate file and replacing categorical fields with corresponding numbers.
 
-They are available in [`public/data/ford_gobike/`](https://github.com/idewz/cs560-project/tree/master/public/data/ford_gobike).
+They are available in [`public/data/ford_gobike/`](public/data/ford_gobike/).
 
 ### Materials
 
 * [Process Book](#)
-* [Presentation SLides](#)
+* [Presentation Slides](materials/Presentation.pdf)
