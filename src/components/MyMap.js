@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import {
@@ -16,13 +17,69 @@ class MyMap extends Component {
 
     this.state = {};
 
+    this.renderLineMarker = this.renderLineMarker.bind(this);
     this.renderMarker = this.renderMarker.bind(this);
     this.renderMarkers = this.renderMarkers.bind(this);
     this.handleMarkerClick = this.handleMarkerClick.bind(this);
   }
 
+  getSymbol(to, from) {
+    const pos1 = new google.maps.LatLng(from.position.lat, from.position.lng);
+    const pos2 = new google.maps.LatLng(to.position.lat, to.position.lng);
+
+    const projection = this.node.getProjection();
+    const p1 = projection.fromLatLngToPoint(pos1);
+    const p2 = projection.fromLatLngToPoint(pos2);
+    const curvature = 0.1;
+
+    const e = new google.maps.Point(p2.x - p1.x, p2.y - p1.y);
+    const m = new google.maps.Point(e.x / 2, e.y / 2);
+    let o;
+
+    if (e.y >= 0) {
+      o = new google.maps.Point(-e.y, e.x);
+    } else {
+      o = new google.maps.Point(e.y, -e.x);
+    }
+
+    const c = new google.maps.Point(
+      m.x + curvature * o.x,
+      m.y + curvature * o.y
+    );
+    const pathDef = 'M 0,0 q ' + c.x + ',' + c.y + ' ' + e.x + ',' + e.y;
+
+    const zoom = this.props.zoom;
+    const scale = 1 / Math.pow(2, -zoom);
+    const symbol = {
+      path: pathDef,
+      scale: scale,
+      strokeWeight: 0.7,
+      fillColor: 'None',
+      strokeColor: 'yellow',
+      strokeOpacity: 0.8,
+    };
+
+    return symbol;
+  }
+
   handleMarkerClick(id) {
     this.props.handleStationChange(id);
+  }
+
+  renderLineMarker(station) {
+    const { selectedId } = this.props;
+    const from = this.props.stations.find(s => s.id === selectedId);
+    const to = station;
+    const symbol = this.getSymbol(from, to);
+
+    return (
+      <Marker
+        key={station.id}
+        icon={symbol}
+        position={station.position}
+        zIndex={-100}
+      />
+    );
   }
 
   renderMarker(station) {
@@ -36,7 +93,7 @@ class MyMap extends Component {
         key={station.id}
         animation={match ? 4 : 0}
         label={index !== -1 ? labels[index] : undefined}
-        position={{ lat: station.latitude, lng: station.longitude }}
+        position={station.position}
         onClick={() => this.handleMarkerClick(station.id)}
       >
         {match && (
@@ -48,7 +105,7 @@ class MyMap extends Component {
     );
   }
 
-  renderMarkers() {
+  renderMarkers(func = this.renderMarker) {
     return this.props.destinations.length
       ? this.props.stations
           .filter(
@@ -56,48 +113,22 @@ class MyMap extends Component {
               this.props.destinations.find(t => t.id === s.id) ||
               s.id === this.props.selectedId
           )
-          .map(this.renderMarker)
-      : this.props.stations.map(this.renderMarker);
-  }
-
-  findCenter(stations) {
-    const s1 = stations[0];
-    const coordinates = {
-      x1: s1.latitude,
-      y1: s1.longitude,
-      x2: s1.latitude,
-      y2: s1.longitude,
-    };
-    stations.forEach(s => {
-      coordinates.x1 = Math.min(coordinates.x1, s.latitude);
-      coordinates.y1 = Math.min(coordinates.y1, s.longitude);
-      coordinates.x2 = Math.max(coordinates.x2, s.latitude);
-      coordinates.y2 = Math.max(coordinates.y2, s.longitude);
-    });
-
-    const { x1, y1, x2, y2 } = coordinates;
-
-    return { lat: x1 + (x2 - x1) / 2, lng: y1 + (y2 - y1) / 2 };
+          .map(func)
+      : this.props.stations.map(func);
   }
 
   render() {
     const { selectedId, stations } = this.props;
     const stationNotFound = stations.findIndex(s => s.id === selectedId) === -1;
-    let currentCenter = this.props.center;
-    let currentZoom = this.props.zoom;
-
-    if (stationNotFound && stations.length > 0) {
-      currentCenter = this.findCenter(stations);
-      currentZoom = 10;
-    }
 
     return (
       <GoogleMap
         ref={node => (this.node = node)}
         defaultZoom={10}
         defaultOptions={{ styles }}
-        center={currentCenter}
-        zoom={currentZoom}
+        defaultCenter={this.props.center}
+        center={this.props.center}
+        zoom={this.props.zoom}
         onZoomChanged={() => {
           this.props.handleZoomChange(this.node.getZoom());
         }}
@@ -107,6 +138,8 @@ class MyMap extends Component {
             {stations && this.renderMarkers()}
           </MarkerClusterer>
         )}
+        {!stationNotFound &&
+          (stations && this.renderMarkers(this.renderLineMarker))}
         {!stationNotFound && (stations && this.renderMarkers())}
       </GoogleMap>
     );

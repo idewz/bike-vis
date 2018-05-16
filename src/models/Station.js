@@ -17,6 +17,10 @@ class Station {
     return area;
   }
 
+  get position() {
+    return { lat: this.latitude, lng: this.longitude };
+  }
+
   toString() {
     return this.name;
   }

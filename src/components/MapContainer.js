@@ -100,20 +100,46 @@ class MapContainer extends Component {
     );
   }
 
+  findCenter(stations) {
+    const s1 = stations[0];
+    const coordinates = {
+      x1: s1.latitude,
+      y1: s1.longitude,
+      x2: s1.latitude,
+      y2: s1.longitude,
+    };
+    stations.forEach(s => {
+      coordinates.x1 = Math.min(coordinates.x1, s.latitude);
+      coordinates.y1 = Math.min(coordinates.y1, s.longitude);
+      coordinates.x2 = Math.max(coordinates.x2, s.latitude);
+      coordinates.y2 = Math.max(coordinates.y2, s.longitude);
+    });
+
+    const { x1, y1, x2, y2 } = coordinates;
+
+    return { lat: x1 + (x2 - x1) / 2, lng: y1 + (y2 - y1) / 2 };
+  }
+
   render() {
     const { classes, stations, stationIndices } = this.props;
-    const { selectedId } = this.state;
+    let { center, selectedId, zoom } = this.state;
     const index = stationIndices[selectedId];
     const station =
       index !== undefined ? stations[stationIndices[selectedId]] : undefined;
     const topStations = this.findTopStations(selectedId);
 
+    // TODO: Only reset center when area changed
+    if (index === undefined && stations.length > 0) {
+      center = this.findCenter(stations);
+      zoom = 10;
+    }
+
     return (
       <Grid container spacing={24}>
         <Grid item xs={12} md={8}>
           <MyMap
-            center={this.state.center}
-            zoom={this.state.zoom}
+            center={center}
+            zoom={zoom}
             stations={this.props.stations}
             selectedId={this.state.selectedId}
             handleStationChange={this.handleStationChange}
