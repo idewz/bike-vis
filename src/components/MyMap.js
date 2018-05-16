@@ -55,7 +55,7 @@ class MyMap extends Component {
       scale: scale,
       strokeWeight: 0.7,
       fillColor: 'None',
-      strokeColor: 'yellow',
+      strokeColor: 'red',
       strokeOpacity: 0.8,
     };
 
@@ -77,7 +77,7 @@ class MyMap extends Component {
         key={station.id}
         icon={symbol}
         position={station.position}
-        zIndex={-100}
+        zIndex={-1000}
       />
     );
   }
