@@ -36,6 +36,7 @@ class BarChart extends Component {
 
     const node = this.node;
     const svg = d3.select(node);
+    const unit = this.props.unit;
     const container = svg
       .append('g')
       .attr('class', 'container')
@@ -94,7 +95,7 @@ class BarChart extends Component {
 
     function handleMouseOver(d) {
       d3.select(this).style('fill', '#a50f15');
-      tooltip.html(`<div class="number">${niceNumber(d)}</div>`);
+      tooltip.html(`<div class="number">${niceNumber(d)}</div> ${unit}`);
       tooltip.style('visibility', 'visible');
     }
 
@@ -148,6 +149,11 @@ class BarChart extends Component {
 BarChart.propTypes = {
   data: PropTypes.array.isRequired,
   bands: PropTypes.array.isRequired,
+  unit: PropTypes.string,
+};
+
+BarChart.defaultProps = {
+  unit: 'trips',
 };
 
 export default BarChart;
