@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import range from 'lodash.range';
 
 import * as d3 from 'd3';
-import { red } from 'material-ui/colors';
 import { niceNumber } from '../utils';
 
 class TimeMatrix extends Component {
@@ -43,7 +42,7 @@ class TimeMatrix extends Component {
   }
 
   chart = { width: 48 * 7, height: 16 * 24, margin: 20 };
-  colors = [red[100], red[300], red[400], red[700], red[900]];
+  colors = [ '#fee5d9', '#fcae91', '#fb6a4a', '#de2d26', '#a50f15' ];
   days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
   xScale = d3

@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
 import * as d3 from 'd3';
-import { red } from 'material-ui/colors';
 import { niceNumber } from '../utils';
 
 class BarChart extends Component {
@@ -88,13 +87,13 @@ class BarChart extends Component {
       .attr('y', d => this.yScale(d))
       .attr('height', d => this.chart.height - this.yScale(d))
       .attr('width', xScale.bandwidth())
-      .style('fill', red[400])
+      .style('fill', '#fb6a4a')
       .on('mouseover', handleMouseOver)
       .on('mousemove', handleMouseMove)
       .on('mouseout', handleMouseOut);
 
     function handleMouseOver(d) {
-      d3.select(this).style('fill', red[800]);
+      d3.select(this).style('fill', '#a50f15');
       tooltip.html(`<div class="number">${niceNumber(d)}</div>`);
       tooltip.style('visibility', 'visible');
     }
@@ -106,7 +105,7 @@ class BarChart extends Component {
     }
 
     function handleMouseOut(d) {
-      d3.select(this).style('fill', red[400]);
+      d3.select(this).style('fill', '#fb6a4a');
       tooltip.style('visibility', 'hidden');
     }
   }
