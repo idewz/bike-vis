@@ -169,7 +169,7 @@ class NestedMap extends Component {
   }
 
   render() {
-    return <svg ref={node => (this.node = node)} width={660} height={100} />;
+    return <svg ref={node => (this.node = node)} width={600} height={100} />;
   }
 }
 
