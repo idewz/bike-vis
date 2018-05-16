@@ -33,7 +33,7 @@ class MapContainer extends Component {
       const center = station
         ? { lat: station.latitude, lng: station.longitude }
         : { lat: 37.78637526861584, lng: -122.40490436553954 };
-      const zoom = 16;
+      const zoom = 14;
 
       this.setState({ center, zoom });
     }
