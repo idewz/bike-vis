@@ -9,7 +9,6 @@ import {
   InfoWindow,
 } from 'react-google-maps';
 import { MarkerClusterer } from 'react-google-maps/lib/components/addons/MarkerClusterer';
-import styles from './style.json';
 
 class MyMap extends Component {
   constructor(props) {
@@ -125,7 +124,6 @@ class MyMap extends Component {
       <GoogleMap
         ref={node => (this.node = node)}
         defaultZoom={10}
-        defaultOptions={{ styles }}
         defaultCenter={this.props.center}
         center={this.props.center}
         zoom={this.props.zoom}
