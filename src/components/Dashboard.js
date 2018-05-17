@@ -218,8 +218,11 @@ class Dashboard extends Component {
               Bike sharing visulization project created by{' '}
               <em>Siwadon Saosoong</em> and <em>Surada Lerkpatomsak</em>. Please
               check out our{' '}
-              <a href="https://github.com/idewz/bike-vis">github</a> repository
-              for more information.
+              <a href="https://github.com/idewz/bike-vis/blob/master/materials/ProcessBook.pdf">
+                process book
+              </a>{' '}
+              and <a href="https://github.com/idewz/bike-vis">github</a>{' '}
+              repository for more information.
             </Typography>
           </Grid>
         </Grid>

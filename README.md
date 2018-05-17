@@ -42,5 +42,5 @@ They are available in [`public/data/ford_gobike/`](public/data/ford_gobike/).
 
 ### Materials
 
-* [Process Book](#)
+* [Process Book](materials/ProcessBook.pdf)
 * [Presentation Slides](materials/Presentation.pdf)
