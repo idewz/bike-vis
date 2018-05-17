@@ -35,7 +35,7 @@ To create a production bundle, use `yarn build` (or `npm run build`).
 
 ### Data
 
-We use data from Ford Gobike [historical trip data](https://s3.amazonaws.com/fordgobike-data/index.html),
+We use data from Ford Gobike [historical trip data](https://s3.amazonaws.com/fordgobike-data/index.html) in 2017,
 but we have modified the original file to make it smaller by extracting stations information into a separate file and replacing categorical fields with corresponding numbers.
 
 They are available in [`public/data/ford_gobike/`](public/data/ford_gobike/).

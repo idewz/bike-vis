@@ -212,6 +212,16 @@ class Dashboard extends Component {
               trips={this.props.trips}
             />
           </Grid>
+
+          <Grid item xs={11}>
+            <Typography variant="body1">
+              Bike sharing visulization project created by{' '}
+              <em>Siwadon Saosoong</em> and <em>Surada Lerkpatomsak</em>. Please
+              check out our{' '}
+              <a href="https://github.com/idewz/bike-vis">github</a> repository
+              for more information.
+            </Typography>
+          </Grid>
         </Grid>
       </Grid>
     );
